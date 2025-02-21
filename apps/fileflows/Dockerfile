@@ -28,18 +28,18 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and set up FileFlows
-# WORKDIR /tmp/fileflows
-# RUN wget -O FileFlows.zip https://fileflows.com/downloads/zip && \
-#     unzip FileFlows.zip -d /app && \
-#     cd /app && \
-#     bash /bin/sh -c 'for file in *.sh; do [ -f "$file" ] && chmod +x "$file"; done'
+WORKDIR /tmp/fileflows
+RUN wget -O FileFlows.zip https://fileflows.com/downloads/zip && \
+    unzip FileFlows.zip -d /app && \
+    cd /app && \
+    bash /bin/sh -c 'for file in *.sh; do [ -f "$file" ] && chmod +x "$file"; done'
 
 # TESTING w local file
-WORKDIR /tmp/fileflows
-COPY fileflows.zip .
-RUN unzip fileflows.zip -d /app && \
-    cd /app && \
-    bash -c 'for file in *.sh; do [ -f "$file" ] && chmod +x "$file"; done'
+# WORKDIR /tmp/fileflows
+# COPY fileflows.zip .
+# RUN unzip fileflows.zip -d /app && \
+#     cd /app && \
+#     bash -c 'for file in *.sh; do [ -f "$file" ] && chmod +x "$file"; done'
 
 # DockerMods hack
 # FFMPEG7
