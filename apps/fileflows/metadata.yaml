@@ -1,5 +1,5 @@
 ---
-app: home-assistant
+app: fileflows
 semver: false
 channels:
   - name: stable
