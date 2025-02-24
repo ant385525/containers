@@ -1,5 +1,5 @@
-FROM ./apps/fileflows/Dockerfile.base AS base
-FROM base AS node
+# syntax = edrevo/dockerfile-plus
+INCLUDE+ ../Dockerfile.base
 
 ENV FFNODE=1
 # Clean up and init dirs
