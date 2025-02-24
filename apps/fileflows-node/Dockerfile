@@ -63,7 +63,7 @@ RUN apt-get update && \
 
 # Download FF and clean up unneeded dirs
 RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
-    unzip /tmp/fileflows.zip -d /app && \ rm -rf /app/Server /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
+    unzip /tmp/fileflows.zip -d /app && rm -rf /app/Server /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
     find /app/FlowRunner/runtimes /app/Node/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} + && \
     find . -type f -name "*.sh" -exec chmod +x {} \;
 
