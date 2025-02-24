@@ -1,0 +1,1 @@
+/Users/anthony/containers/apps/fileflows-server/ci/latest.sh

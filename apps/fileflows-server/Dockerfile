@@ -1,5 +1,5 @@
 # syntax = devthefuture/dockerfile-x
-INCLUDE ./apps/fileflows/Dockerfile.base
+INCLUDE ./apps/fileflows-server/Dockerfile.base
 
 # Clean up and init dirs
 RUN rm -rf /app/Node && \

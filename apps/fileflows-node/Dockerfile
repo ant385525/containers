@@ -1,5 +1,5 @@
 # syntax = devthefuture/dockerfile-x
-INCLUDE ./apps/fileflows/Dockerfile.base
+INCLUDE ./apps/fileflows-server/Dockerfile.base
 
 ENV FFNODE=1
 ENV ServerUrl=http://localhost:5000

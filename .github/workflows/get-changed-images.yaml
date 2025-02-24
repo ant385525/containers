@@ -41,10 +41,8 @@ jobs:
         shell: bash
         run: |
           IMAGES=$( \
-            echo '${{ steps.changed-files.outputs.all_changed_and_modified_files }}' \
-            | jq --raw-output 'map(select(endswith("metadata.yaml"))
-              | capture("^(?:.*/)?(?<img>[^/]+)/metadata\\.yaml$")
-              | .img) | unique | join(",")' \
+              echo '${{ steps.changed-files.outputs.all_changed_and_modified_files }}' \
+                  | jq --raw-output 'map(sub("^apps/"; "")) | join(",")' \
           )
           echo "Changed images: ${IMAGES}"
           echo "addedOrModifiedImages=${IMAGES}" >> $GITHUB_OUTPUT
