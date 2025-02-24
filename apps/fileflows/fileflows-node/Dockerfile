@@ -1,4 +1,5 @@
-FROM ant385525/apps/fileflows/Dockerfile.base as node
+FROM ./apps/fileflows/Dockerfile.base AS base
+FROM base AS node
 
 ENV FFNODE=1
 # Clean up and init dirs

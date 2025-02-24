@@ -1,4 +1,5 @@
-FROM ant385525/apps/fileflows/Dockerfile.base as server
+FROM ./apps/fileflows/Dockerfile.base AS base
+FROM base AS server
 
     # Clean up and init dirs
 RUN rm -rf /app/Node && \
