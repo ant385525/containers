@@ -1,4 +1,3 @@
-# Specify the base image (e.g., Ubuntu)
 FROM docker.io/library/ubuntu:24.04
 
 # Set build arguments
@@ -8,8 +7,8 @@ ARG VERSION
 ARG CHANNEL
 
 # Add metadata labels
-LABEL org.opencontainers.image.ref.name="fileflows"
 LABEL org.opencontainers.image.version="25.02"
+LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"
 
 # Set the environment variables
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -64,9 +63,8 @@ RUN apt-get update && \
 # Download FF and clean up unneeded dirs
 RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
     unzip /tmp/fileflows.zip -d /app && \
-    rm -rf /tmp/fileflows.zip /app/Node /app/Server/Nodes/ /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
-    find /app/FlowRunner/runtimes /app/Server/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} + && \
-    find . -type f -name "*.sh" -exec chmod +x {} \;
+    rm -rf /tmp/fileflows.zip /app/Server/Nodes/ /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
+    find /app/FlowRunner/runtimes /app/Server/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} +
 
 # jellyfin-FFMPEG7
 # Taken from dockermod https://raw.githubusercontent.com/revenz/FileFlowsRepository/refs/heads/master/DockerMods/FFmpeg7.sh
@@ -79,9 +77,6 @@ RUN curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --de
     jellyfin-ffmpeg7 && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
-
-COPY ./apps/fileflows-server/entrypoint.sh /app/Server/entrypoint.sh
-RUN chmod +x /app/Server/entrypoint.sh
 
 # purge packages that aren't needed at runtime
 RUN apt-get purge -y \
@@ -102,10 +97,3 @@ chmod -R 777 /app/Server/wwwroot/i18n
 # Set the container to run as a non-root user
 USER nobody:nogroup
 VOLUME ["/app"]
-
-# Expose the port used by FileFlows
-EXPOSE 5000
-
-ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/Server/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"
