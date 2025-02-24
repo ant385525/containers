@@ -40,25 +40,10 @@ jobs:
         id: changed-containers
         shell: bash
         run: |
-          changed_files=$(echo '${{ steps.changed-files.outputs.all_changed_and_modified_files }}' | jq -r 'map(sub("^apps/"; "")) | .[]')
-
-          result=()
-          for file in $changed_files; do
-            dir=$(dirname "$file")
-            candidate="$dir"
-            found=""
-            while [ "$candidate" != "." ] && [ "$candidate" != "/" ]; do
-              if [ -d "apps/$candidate/ci" ]; then
-                found="$candidate"
-                break
-              fi
-              candidate=$(dirname "$candidate")
-            done
-            if [ -n "$found" ]; then
-              result+=("$found")
-            fi
-          done
-
-          unique=$(printf "%s\n" "${result[@]}" | sort -u | paste -sd "," -)
-          echo "addedOrModifiedImages=$unique" >> $GITHUB_OUTPUT
-
+          IMAGES=$( \
+            echo '${{ steps.changed-files.outputs.all_changed_and_modified_files }}' \
+            | jq --raw-output 'map(select(endswith("metadata.yaml"))
+              | capture("^(?:.*/)?(?<img>[^/]+)/metadata\\.yaml$")
+              | .img) | unique | join(",")' \
+          )
+          echo "addedOrModifiedImages=${IMAGES}" >> $GITHUB_OUTPUT
