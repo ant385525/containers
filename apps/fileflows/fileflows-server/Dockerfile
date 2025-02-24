@@ -1,7 +1,7 @@
 # syntax = devthefuture/dockerfile-x
 INCLUDE ./apps/fileflows/Dockerfile.base
 
-    # Clean up and init dirs
+# Clean up and init dirs
 RUN rm -rf /app/Node && \
     # IDK why this is needed don't speak microsoft
     chmod -R 777 /app/Server/wwwroot/i18n
@@ -15,4 +15,4 @@ VOLUME ["/app/Data"]
 WORKDIR /app/Server
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "dotnet", "FileFlows.Server.dll"]
-CMD ["--docker", "true"]
+CMD ["--docker", "true", "--urls=http://*:5000"]
