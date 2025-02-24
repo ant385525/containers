@@ -54,7 +54,7 @@ RUN apt-get update && \
         mesa-va-drivers \
         libmfx-gen1.2 \
         intel-media-va-driver-non-free \
-        libarchive-tools \
+        unzip \
         i965-va-driver-shaders && \
     rm -rf /var/lib/apt/lists/*
 
@@ -85,7 +85,6 @@ RUN mkdir -p /temp /app/Data/Dockermods /app/Logs /app/common /app/ManuallyAdded
 
 # purge packages that aren't needed at runtime
 RUN apt-get purge -y \
-        libarchive-tools \
         gnupg \
         curl \
         apt-transport-https \
