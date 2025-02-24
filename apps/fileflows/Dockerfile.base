@@ -7,7 +7,7 @@ ARG VERSION
 ARG CHANNEL
 
 # Add metadata labels
-LABEL org.opencontainers.image.version="25.02"
+LABEL org.opencontainers.image.version=${VERSION}
 LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"
 
 # Set the environment variables
