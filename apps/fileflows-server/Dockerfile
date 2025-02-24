@@ -2,7 +2,10 @@
 FROM docker.io/library/ubuntu:24.04
 
 # Set build arguments
-ARG TARGETARCH
+ARG LAUNCHPAD_BUILD_ARCH
+ARG TARGETPLATFORM
+ARG VERSION
+ARG CHANNEL
 
 # Add metadata labels
 LABEL org.opencontainers.image.ref.name="fileflows"
@@ -22,9 +25,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UMASK="0002" \
     SQLITE_TMPDIR="/tmp/sqlite/"
 
+USER root
+WORKDIR /app
+
 # All ff deps
 RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests -y \
+        catatonit \
         aspnetcore-runtime-8.0 \
         tzdata \
         ca-certificates \
@@ -92,13 +99,13 @@ chmod -R 755 /app && \
 # IDK why this is needed don't speak microsoft
 chmod -R 777 /app/Server/wwwroot/i18n
 
-WORKDIR /app
 # Set the container to run as a non-root user
 USER nobody:nogroup
-VOLUME ["/app/Data"]
+VOLUME ["/app"]
 
 # Expose the port used by FileFlows
 EXPOSE 5000
 
-# Set the custom entrypoint
-ENTRYPOINT ["/app/server/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", /app/server/entrypoint.sh"]
+
+LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"
