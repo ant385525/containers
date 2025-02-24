@@ -1,5 +1,5 @@
 ---
-app: fileflows
+app: fileflows-server
 semver: false
 channels:
   - name: stable
