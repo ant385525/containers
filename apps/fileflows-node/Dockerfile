@@ -31,13 +31,12 @@ WORKDIR /app
 # All ff deps
 RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests -y \
-        coreutils \
         catatonit \
         aspnetcore-runtime-8.0 \
         tzdata \
         ca-certificates \
         gnupg \
-        libssl-dev \
+        nano \
         curl \
         apt-transport-https \
         openssl \
@@ -53,10 +52,13 @@ RUN apt-get update && \
         vainfo \
         libva-dev \
         mesa-va-drivers \
-        libmfx-gen1.2 \
-        intel-media-va-driver-non-free \
-        unzip \
-        i965-va-driver-shaders && \
+        unzip && \
+    if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
+        apt-get install -y \
+            libmfx-gen1.2 \
+            intel-media-va-driver-non-free \
+            i965-va-driver-shaders; \
+    fi && \
     rm -rf /var/lib/apt/lists/*
 
 # Download FF and clean up unneeded dirs
