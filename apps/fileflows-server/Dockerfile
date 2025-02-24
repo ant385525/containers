@@ -80,8 +80,8 @@ RUN curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --de
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
 
-COPY ./apps/fileflows-node/entrypoint.sh /app/server/entrypoint.sh
-RUN chmod +x /app/server/entrypoint.sh
+COPY ./apps/fileflows-server/entrypoint.sh /app/Server/entrypoint.sh
+RUN chmod +x /app/Server/entrypoint.sh
 
 # purge packages that aren't needed at runtime
 RUN apt-get purge -y \
@@ -106,6 +106,6 @@ VOLUME ["/app"]
 # Expose the port used by FileFlows
 EXPOSE 5000
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/server/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/Server/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"

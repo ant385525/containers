@@ -59,8 +59,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Download FF and clean up unneeded dirs
-RUN curl -fsSL https://fileflows.com/downloads/zip | bsdtar -xvf- -C . && \
-    rm -rf /app/Server /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
+RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
+    unzip /tmp/fileflows.zip -d /app && \ rm -rf /app/Server /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
     find /app/FlowRunner/runtimes /app/Node/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} + && \
     find . -type f -name "*.sh" -exec chmod +x {} \;
 
@@ -76,8 +76,8 @@ RUN curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --de
     ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg && \
     ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe
 
-COPY ./apps/fileflows-node/entrypoint.sh /app/node/entrypoint.sh
-RUN chmod +x /app/node/entrypoint.sh
+COPY ./apps/fileflows-node/entrypoint.sh /app/Node/entrypoint.sh
+RUN chmod +x /app/Node/entrypoint.sh
 
 RUN mkdir -p /temp /app/Data/Dockermods /app/Logs /app/common /app/ManuallyAdded && \
     chown -R nobody:nogroup /temp /app && \
@@ -98,6 +98,6 @@ USER nobody:nogroup
 
 VOLUME ["/app"]
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/node/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/Node/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"
