@@ -46,4 +46,5 @@ jobs:
               | capture("^(?:.*/)?(?<img>[^/]+)/metadata\\.yaml$")
               | .img) | unique | join(",")' \
           )
+          echo "Changed images: ${IMAGES}"
           echo "addedOrModifiedImages=${IMAGES}" >> $GITHUB_OUTPUT

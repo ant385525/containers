@@ -144,6 +144,12 @@ def get_image_metadata(subdir, meta, forRelease=False, force=False, channels=Non
         imagesToBuild["images"].append(toBuild)
     return imagesToBuild
 
+def find_app_directory(app_name):
+    for root, dirs, files in os.walk("./apps"):
+        if os.path.basename(root) == app_name and ("metadata.yaml" in files or "metadata.json" in files):
+            return root
+    return None
+
 if __name__ == "__main__":
     apps = sys.argv[1]
     forRelease = sys.argv[2] == "true"
@@ -154,23 +160,26 @@ if __name__ == "__main__":
     }
 
     if apps != "all":
-        channels=None
+        channels = None
         apps = apps.split(",")
         if len(sys.argv) == 5:
             channels = sys.argv[4].split(",")
 
         for app in apps:
-            if not os.path.exists(os.path.join("./apps", app)):
+            app_dir = find_app_directory(app)
+            if not app_dir:
                 print(f"App \"{app}\" not found")
                 exit(1)
 
             meta = None
-            if os.path.isfile(os.path.join("./apps", app, "metadata.yaml")):
-                meta = load_metadata_file_yaml(os.path.join("./apps", app, "metadata.yaml"))
-            elif os.path.isfile(os.path.join("./apps", app, "metadata.json")):
-                meta = load_metadata_file_json(os.path.join("./apps", app, "metadata.json"))
+            yaml_path = os.path.join(app_dir, "metadata.yaml")
+            json_path = os.path.join(app_dir, "metadata.json")
+            if os.path.isfile(yaml_path):
+                meta = load_metadata_file_yaml(yaml_path)
+            elif os.path.isfile(json_path):
+                meta = load_metadata_file_json(json_path)
 
-            imageToBuild = get_image_metadata(os.path.join("./apps", app), meta, forRelease, force=force, channels=channels)
+            imageToBuild = get_image_metadata(app_dir, meta, forRelease, force=force, channels=channels)
             if imageToBuild is not None:
                 imagesToBuild["images"].extend(imageToBuild["images"])
                 imagesToBuild["imagePlatforms"].extend(imageToBuild["imagePlatforms"])
