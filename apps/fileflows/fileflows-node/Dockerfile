@@ -9,7 +9,7 @@ RUN rm -rf /app/Server && \
     chmod -R 755 /app
 
 COPY ./apps/fileflows/fileflows-node/entrypoint.sh /app/Node/entrypoint.sh
-RUN chmod +x /app/Server/entrypoint.sh
+RUN chmod +x /app/Node/entrypoint.sh
 
 # Set the container to run as a non-root user
 WORKDIR /app
