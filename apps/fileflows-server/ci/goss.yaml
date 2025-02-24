@@ -1,11 +1,11 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 file:
-  /app/Node/FileFlows.Server.dll:
+  /app/Server/FileFlows.Server.dll:
     exists: true
 process:
   dotnet:
     running: true
 port:
-  tcp6:5000:
+  tcp:5000:
     listening: true
