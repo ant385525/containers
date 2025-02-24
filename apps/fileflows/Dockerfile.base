@@ -64,7 +64,7 @@ RUN apt-get update && \
 RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
     unzip /tmp/fileflows.zip -d /app && \
     rm -rf /tmp/fileflows.zip /app/Server/Nodes/ /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
-    find /app/FlowRunner/runtimes /app/Server/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} +
+    find /app/FlowRunner/runtimes /app/Server/runtimes /app/Node/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} +
 
 # jellyfin-FFMPEG7
 # Taken from dockermod https://raw.githubusercontent.com/revenz/FileFlowsRepository/refs/heads/master/DockerMods/FFmpeg7.sh
@@ -93,5 +93,3 @@ chown -R nobody:nogroup /temp /app && \
 chmod -R 755 /app && \
 # IDK why this is needed don't speak microsoft
 chmod -R 777 /app/Server/wwwroot/i18n
-
-VOLUME ["/app"]
