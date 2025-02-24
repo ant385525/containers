@@ -98,6 +98,6 @@ USER nobody:nogroup
 
 VOLUME ["/app"]
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", /app/node/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/node/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"

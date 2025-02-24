@@ -106,6 +106,6 @@ VOLUME ["/app"]
 # Expose the port used by FileFlows
 EXPOSE 5000
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", /app/server/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/app/server/entrypoint.sh"]
 
 LABEL org.opencontainers.image.source="https://github.com/revenz/fileflows"
