@@ -23,7 +23,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     NVIDIA_VISIBLE_DEVICES="all" \
     DOTNET_CLI_TELEMETRY_OPTOUT=true \
     UMASK="0002" \
-    SQLITE_TMPDIR="/tmp/sqlite/"
+    SQLITE_TMPDIR="/tmp/sqlite/" \
+    FFNODE=1
 
 USER root
 WORKDIR /app
