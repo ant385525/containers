@@ -92,8 +92,5 @@ USER nobody:nogroup
 
 VOLUME ["/app/Data"]
 
-# Expose the port used by FileFlows
-EXPOSE 5000
-
 # Set the custom entrypoint
 ENTRYPOINT ["/app/server/entrypoint.sh"]
