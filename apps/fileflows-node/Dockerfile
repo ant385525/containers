@@ -31,6 +31,7 @@ WORKDIR /app
 # All ff deps
 RUN apt-get update && \
     apt-get install --no-install-recommends --no-install-suggests -y \
+        coreutils \
         catatonit \
         aspnetcore-runtime-8.0 \
         tzdata \
