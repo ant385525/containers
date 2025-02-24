@@ -94,6 +94,4 @@ chmod -R 755 /app && \
 # IDK why this is needed don't speak microsoft
 chmod -R 777 /app/Server/wwwroot/i18n
 
-# Set the container to run as a non-root user
-USER nobody:nogroup
 VOLUME ["/app"]
