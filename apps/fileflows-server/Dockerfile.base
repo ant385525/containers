@@ -29,11 +29,7 @@ WORKDIR /app
 
 # All ff deps
 RUN apt-get update && \
-      apt-get install --no-install-recommends --no-install-suggests -y \
-        software-properties-common \
-        add-apt-repository universe && \
-      apt-get update && \
-      apt-get install --no-install-recommends --no-install-suggests -y \
+    apt-get install --no-install-recommends --no-install-suggests -y \
         catatonit \
         dotnet-sdk-8.0 \
         tzdata \
@@ -57,7 +53,8 @@ RUN apt-get update && \
             libmfx-gen1.2 \
             intel-media-va-driver-non-free \
             i965-va-driver-shaders; \
-    fi
+    fi && \
+    rm -rf /var/lib/apt/lists/*
 
 # Download FF and clean up unneeded dirs
 RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
@@ -79,9 +76,9 @@ RUN curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --de
 
 # purge packages that aren't needed at runtime
 RUN apt-get purge -y \
+        libarchive-tools \
         gnupg \
-        apt-transport-https \
-        software-properties-common && \
+        apt-transport-https && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
