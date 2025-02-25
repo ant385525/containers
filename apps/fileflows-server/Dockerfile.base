@@ -34,7 +34,7 @@ RUN if [ "$(dpkg --print-architecture)" = "arm64" ]; then \
     | xargs -n1 -I {} sh -c 'echo `curl -r 0-102400 -s -w %{speed_download} -o /dev/null {}/ls-lR.gz` {}' \
     | sort -g -r | head -1 | awk '{ print $2 }') && \
     echo "Using mirror: $UBUNTU_MIRROR" && \
-    sed -i "s|http://ports.ubuntu.com/ubuntu-ports|$UBUNTU_MIRROR|g" /etc/apt/sources.list \
+    sed -i "s|http://ports.ubuntu.com/ubuntu-ports|$UBUNTU_MIRROR|g" /etc/apt/sources.list; \
 fi
 
 # All ff deps
@@ -64,7 +64,7 @@ RUN apt-get update && \
             intel-media-va-driver-non-free \
             i965-va-driver-shaders; \
     fi
-    
+
 # Download FF and clean up unneeded dirs
 RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
     unzip /tmp/fileflows.zip -d /app && \
