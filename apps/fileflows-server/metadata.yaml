@@ -1,6 +1,6 @@
 ---
 app: fileflows-server
-semver: false
+semver: true
 channels:
   - name: stable
     platforms: ["linux/amd64", "linux/arm64"]
