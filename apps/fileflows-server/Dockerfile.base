@@ -47,6 +47,8 @@ RUN apt-get update && \
         pciutils \
         vainfo \
         python3 python3-pip \
+        # temp for ebook2audiobook
+        libmecab-dev mecab-ipadic \
         unzip && \
     if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
         apt-get install -y \
