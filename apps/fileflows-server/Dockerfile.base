@@ -47,8 +47,7 @@ RUN apt-get update && \
         pciutils \
         vainfo \
         python3 python3-pip \
-        # temp for ebook2audiobook
-        libmecab-dev mecab-ipadic \
+        kubectl \
         unzip && \
     if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
         apt-get install -y \
@@ -64,6 +63,10 @@ RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
     rm -rf /tmp/fileflows.zip /app/Server/Nodes/ /app/server-upgrade.bat /app/server-upgrade-actual.bat /app/server-upgrade.sh && \
     find /app/FlowRunner/runtimes /app/Server/runtimes /app/Node/runtimes -mindepth 1 -maxdepth 1 -type d ! -name "linux-x64" ! -name "linux-arm64" ! -name "unix" -exec rm -rf {} +
 
+# kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x kubectl && mv kubectl /usr/local/bin/
+  
 # jellyfin-FFMPEG7
 # Taken from dockermod https://raw.githubusercontent.com/revenz/FileFlowsRepository/refs/heads/master/DockerMods/FFmpeg7.sh
 RUN curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --dearmor --batch --yes -o /etc/apt/trusted.gpg.d/debian-jellyfin.gpg && \
