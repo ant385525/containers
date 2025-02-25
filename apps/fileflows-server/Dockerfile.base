@@ -47,7 +47,6 @@ RUN apt-get update && \
         pciutils \
         vainfo \
         python3 python3-pip \
-        kubectl \
         unzip && \
     if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
         apt-get install -y \
@@ -66,7 +65,7 @@ RUN curl -fsSL -o /tmp/fileflows.zip https://fileflows.com/downloads/zip && \
 # kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && mv kubectl /usr/local/bin/
-  
+
 # jellyfin-FFMPEG7
 # Taken from dockermod https://raw.githubusercontent.com/revenz/FileFlowsRepository/refs/heads/master/DockerMods/FFmpeg7.sh
 RUN curl -fsSL https://repo.jellyfin.org/debian/jellyfin_team.gpg.key | gpg --dearmor --batch --yes -o /etc/apt/trusted.gpg.d/debian-jellyfin.gpg && \
