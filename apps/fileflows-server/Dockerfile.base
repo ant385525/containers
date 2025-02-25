@@ -46,7 +46,7 @@ RUN apt-get update && \
         libfreetype6 \
         pciutils \
         vainfo \
-        python3 \
+        python3 python3-pip \
         unzip && \
     if [ "$(dpkg --print-architecture)" = "amd64" ]; then \
         apt-get install -y \
