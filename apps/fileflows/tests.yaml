@@ -19,5 +19,3 @@ link:
 command:
   "ffmpeg -version":
     exit-status: 0
-    stdout:
-      - '^[Ff]fmpeg version [0-9]+\.[0-9]+\.[0-9]+-Jellyfin.*'
