@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.04-slim AS fileflows-download
+FROM docker.io/library/ubuntu:24.04 AS fileflows-download
 ARG VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -33,7 +33,7 @@ RUN \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-FROM docker.io/library/ubuntu:24.04-slim AS runtime
+FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
