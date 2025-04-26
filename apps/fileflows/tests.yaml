@@ -23,7 +23,7 @@ command:
   'ls -A /app/Server/wwwroot/i18n/':
     exit-status: 0
     stdout:
-      - '.+'
+      - '/^.+$/'
 file:
   /app/Data/Data/FileFlows.sqlite:
     exists: true
