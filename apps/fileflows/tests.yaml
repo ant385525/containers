@@ -19,3 +19,16 @@ link:
 command:
   "ffmpeg -version":
     exit-status: 0
+    stdout:
+      - '/^ffmpeg version 7\.[0-9]+\.[0-9]+-Jellyfin.*$/'
+  # Ensure i18n hack worked
+  'ls -A /app/Server/wwwroot/i18n/':
+    exit-status: 0
+    stdout:
+      - '/^.+$/'
+file:
+  /app/Data/Data/FileFlows.sqlite:
+    exists: true
+    owner: nobody
+    group: nogroup
+    mode: "0644"
