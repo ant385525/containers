@@ -19,3 +19,9 @@ link:
 command:
   "ffmpeg -version":
     exit-status: 0
+file:
+  /app/Data/Data/FileFlows.sqlite:
+    exists: true
+    owner: nobody
+    group: nogroup
+    mode: "0644"
