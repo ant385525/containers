@@ -3,13 +3,6 @@
 FROM docker.io/alpine/git:v2.47.2 AS cwa-download
 
 ARG VERSION
-ENV \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1
     
 WORKDIR /app
 USER root
@@ -18,7 +11,6 @@ RUN \
     git clone --branch V3.0.4 --depth 1 \
         https://github.com/crocodilestick/Calibre-Web-Automated.git /tmp \
     && cp -r /tmp/requirements.txt /tmp/dirs.json /tmp/scripts /tmp/root/* /app \
-    && pip install --upgrade -r requirements.txt \
     && rm -rf /tmp/* 
 
 
@@ -62,4 +54,4 @@ RUN \
         libxml2 \
         libxslt \
         sqlite \
-    # && pip install --upgrade -r /app/calibre-web-automated/requirements.txt \
+    && pip install --upgrade -r /app/calibre-web-automated/requirements.txt \
