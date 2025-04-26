@@ -19,6 +19,11 @@ link:
 command:
   "ffmpeg -version":
     exit-status: 0
+  # Ensure i18n hack worked
+  'ls -A /app/Server/wwwroot/i18n/':
+    exit-status: 0
+    stdout:
+      - '.+'
 file:
   /app/Data/Data/FileFlows.sqlite:
     exists: true

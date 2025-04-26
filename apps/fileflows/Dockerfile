@@ -17,8 +17,6 @@ RUN \
         unzip \
     && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip /tmp/fileflows.zip -d /app \
-    # i18n hack
-    && mkdir -p /var/tmp/i18n && mv /app/Server/wwwroot/i18n/* /var/tmp/i18n \
     # Init directories
     && mkdir -p /app/Plugins /app/DockerMods /app/common \
         /app/Logs /app/ManuallyAdded /app/Templates /app/Data/Data \
@@ -57,6 +55,8 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
 USER root
 WORKDIR /app
 
+COPY --from=fileflows-download /app /app
+
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
@@ -93,10 +93,9 @@ RUN \
     && apt-get autoremove -y \
     && apt-get clean \
     # Clean up image
-    && rm -rf /var/lib/apt/lists/*
-
-COPY --from=fileflows-download /app /app
-COPY --from=fileflows-download /var/tmp/i18n /var/tmp/i18n
+    && rm -rf /var/lib/apt/lists/* \
+    # i18n hack
+    && mkdir -p /var/tmp/i18n && mv /app/Server/wwwroot/i18n/* /var/tmp/i18n
 
 COPY . /
 RUN chmod +x /entrypoint.sh
