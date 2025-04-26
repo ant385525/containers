@@ -12,6 +12,7 @@ WORKDIR /app
 
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        ca-certificates \
         curl \
         unzip \
     && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
@@ -27,6 +28,7 @@ RUN \
     && rm -rf /tmp/* /app/{FlowRunner,Node,Server}/runtimes \
         /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+        ca-certificates \
         curl \
         unzip \
     && apt-get autoremove -y \
