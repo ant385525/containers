@@ -17,7 +17,7 @@ USER root
 RUN \
     git clone --branch V3.0.4 --depth 1 \
         https://github.com/crocodilestick/Calibre-Web-Automated.git /tmp \
-    && cp -r /tmp/requirements.txt dirs.json /tmp/scripts /tmp/root/* /app \
+    && cp -r /tmp/requirements.txt /tmp/dirs.json /tmp/scripts /tmp/root/* /app \
     && pip install --upgrade -r requirements.txt \
     && rm -rf /tmp/* 
 
