@@ -1,25 +1,31 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# i18n hack
-cp -r /var/tmp/i18n/* /app/Server/wwwroot/i18n/
+echo "Starting Calibre Web Automated"
+echo "Running init scripts..."
 
-# Start proper process
-if [ "$FFNODE" = "0" ]; then
-    echo "Starting Fileflows Server..."
-    cd /app/Server
-    exec dotnet FileFlows.Server.dll --urls="http://0.0.0.0:${PORT};http://[::]:${PORT}" --docker
-elif [ "$FFNODE" = "1" ]; then
-    if [ -z "$ServerUrl" ]; then
-        echo "Error: Running as a node but 'ServerUrl' environment variable is not set."
-        exit 1
-    fi
+# https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-init/run
+bash /init-scripts/cwa-db-init.sh
+bash /init-scripts/cwa-binary-paths.sh
+# https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-auto-library/run
+bash /init-scripts/cwa-auto-library.sh
 
-    echo "Starting FileFlows Node..."
-    cd /app/Node
-    exec dotnet FileFlows.Node.dll --docker
-else
-    echo "Unknown FFNODE value: '$FFNODE'"
-    echo "To run the node set the FFNODE env to '1'"
-    exit 1
-fi
+echo "init scripts complete. Starting application..."
+# https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-auto-zipper/run
+bash /init-scripts/cwa-auto-zipper.sh &
+ZIPPER_PID=$!
+# https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-ingest-service/run
+bash /init-scripts/cwa-ingest-service.sh &
+INGEST_PID=$!
+# https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/metadata-change-detector/run
+bash /init-scripts/cwa-metadata-service.sh &
+METADATA_PID=$!
+
+# Kill container if any app script fails
+wait -n
+code=$?
+echo "[entrypoint] A child exited with exit code $code — terminating the rest."
+kill -- "$ZIPPER_PID" "$INGEST_PID" "$METADATA_PID" 2>/dev/null || true
+exit $code
+# Process exited w/ code 0, wait for others
+wait

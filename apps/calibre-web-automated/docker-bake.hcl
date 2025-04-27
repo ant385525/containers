@@ -1,12 +1,11 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=custom.fileflows depName=fileflows versioning=loose
-  default = "25.4.6.5339"
+  default = "3.0.4"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/revenz/fileflows"
+  default = "https://github.com/crocodilestick/Calibre-Web-Automated"
 }
 
 group "default" {
