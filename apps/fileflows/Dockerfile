@@ -78,7 +78,7 @@ RUN \
         vainfo \
         libva2 \
     && \
-        if [ "${TARGETARCH}" == "amd64" ]; then \
+        if [ "${TARGETARCH}" = "amd64" ]; then \
             apt-get install -y --no-install-recommends --no-install-suggests \
                 intel-media-va-driver-non-free \
                 i965-va-driver-shaders \
