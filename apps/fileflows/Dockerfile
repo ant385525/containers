@@ -61,7 +61,7 @@ COPY --from=fileflows-download /app /app
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         software-properties-common \
-        add-apt-repository universe \
+    && add-apt-repository universe \
     && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         # Can uninstall before build
         apt-transport-https \
