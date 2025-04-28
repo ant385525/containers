@@ -75,7 +75,7 @@ RUN \
         libfreetype6 \
         pciutils \
         # Intel HW
-        libva-utils \
+        vainfo \
         libva2 \
     && \
         if [ "${TARGETARCH}" == "amd64" ]; then \
