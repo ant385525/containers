@@ -4,10 +4,8 @@ set -euo pipefail
 
 echo "[cwa-ingest-service] Monitoring /cwa-book-ingest for new files…"
 
-inotifywait -m \
-  -e close_write,moved_to \
-  --format '%w%f' \
-  '/cwa-book-ingest' \
+exec inotifywait -m \
+  -e close_write,moved_to --format '%w%f' '/cwa-book-ingest' \
 | while read -r NEWFILE; do
     echo "[cwa-ingest-service] Detected new file: $NEWFILE"
     python3 /app/calibre-web-automated/scripts/ingest_processor.py "$NEWFILE"

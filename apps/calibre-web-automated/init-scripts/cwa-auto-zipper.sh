@@ -3,5 +3,5 @@
 set -euo pipefail
 
 echo "[auto-zipper] Enabling cronjob..."
-supercronic /app/calibre-web-automated/cron
-
+# TODO
+exec supercronic "/etc/cron.d/auto_zip"

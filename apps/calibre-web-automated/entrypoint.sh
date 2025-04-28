@@ -10,22 +10,18 @@ bash /init-scripts/cwa-binary-paths.sh
 # https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-auto-library/run
 bash /init-scripts/cwa-auto-library.sh
 
-echo "init scripts complete. Starting application..."
+# Fully initialize db to set custom settings
+bash /init-scripts/cwa-db-config.sh
+
+echo "init scripts complete. Starting services in the background..."
 # https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-auto-zipper/run
 bash /init-scripts/cwa-auto-zipper.sh &
-ZIPPER_PID=$!
 # https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-ingest-service/run
 bash /init-scripts/cwa-ingest-service.sh &
-INGEST_PID=$!
 # https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/metadata-change-detector/run
 bash /init-scripts/cwa-metadata-service.sh &
-METADATA_PID=$!
 
-# Kill container if any app script fails
-wait -n
-code=$?
-echo "[entrypoint] A child exited with exit code $code — terminating the rest."
-kill -- "$ZIPPER_PID" "$INGEST_PID" "$METADATA_PID" 2>/dev/null || true
-exit $code
-# Process exited w/ code 0, wait for others
-wait
+echo "services started. Starting app..."
+# sleep 1d
+# start app
+exec python3 /app/calibre-web/cps.py

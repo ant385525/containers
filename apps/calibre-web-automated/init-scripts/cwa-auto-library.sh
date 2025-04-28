@@ -3,4 +3,4 @@
 set -euo pipefail
 
 echo "[cwa-auto-library] Running auto_library…"
-python /app/calibre-web-automated/scripts/auto_library.py
+exec python3 /app/calibre-web-automated/scripts/auto_library.py

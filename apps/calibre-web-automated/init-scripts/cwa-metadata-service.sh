@@ -7,7 +7,7 @@ echo "[cwa-metadata-change-detector] Starting…"
 WATCH_FOLDER="/app/calibre-web-automated/metadata_change_logs"
 echo "[cwa-metadata-change-detector] Watching folder: $WATCH_FOLDER"
 
-inotifywait -m \
+exec inotifywait -m \
   -e close_write,moved_to \
   --exclude '^.*\.(swp)$' \
   "$WATCH_FOLDER" \

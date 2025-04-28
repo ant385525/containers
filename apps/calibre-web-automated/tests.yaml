@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 port:
-  tcp:5000:
+  tcp:8083:
     listening: true
 http:
   http://localhost:5000/api/status:
