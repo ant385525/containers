@@ -60,6 +60,9 @@ COPY --from=fileflows-download /app /app
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        software-properties-common \
+        add-apt-repository universe \
+    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         # Can uninstall before build
         apt-transport-https \
         curl \
