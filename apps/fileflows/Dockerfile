@@ -74,13 +74,14 @@ RUN \
         # Intel HW
         vainfo \
         libva-dev \
-    && if [ ${TARGETARCH} == 'amd64' ]; then \
-        apt-get install -y --no-install-recommends --no-install-suggests \
-            intel-media-va-driver-non-free \
-            i965-va-driver-shaders \
-            libmfx-dev \
-            libmfx-gen1.2 \
-    fi \
+    && \
+        if [ ${TARGETARCH} == 'amd64' ]; then \
+            apt-get install -y --no-install-recommends --no-install-suggests \
+                intel-media-va-driver-non-free \
+                i965-va-driver-shaders \
+                libmfx-dev \
+                libmfx-gen1.2; \
+        fi \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
