@@ -72,14 +72,13 @@ RUN \
         libfreetype6 \
         pciutils \
         # Intel HW
-        vainfo \
-        libva-dev \
+        libva-utils \
+        libva2 \
     && \
-        if [ ${TARGETARCH} == 'amd64' ]; then \
+        if [ "${TARGETARCH}" == "amd64" ]; then \
             apt-get install -y --no-install-recommends --no-install-suggests \
                 intel-media-va-driver-non-free \
                 i965-va-driver-shaders \
-                libmfx-dev \
                 libmfx-gen1.2; \
         fi \
     # Install ffmpeg
