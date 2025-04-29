@@ -1,0 +1,78 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+http:
+  http://localhost:8083/login:
+    status: 200
+
+file:
+  /usr/local/bin/supercronic:
+    exists: true
+    mode: "0755"
+  /usr/bin/kepubify:
+    exists: true
+    mode: "0755"
+  /usr/bin/chown:
+    exists: true
+    mode: "0755"
+  /config/cwa.db:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /config/app.db:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /app/calibre-web/cps/cwa_functions.py:
+    exists: true
+    owner: nobody
+    group: nogroup
+
+dir:
+  /app/calibre:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /app/calibre-web:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /app/calibre-web-automated:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /cwa-book-ingest:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /calibre-library:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /config:
+    exists: true
+    owner: nobody
+    group: nogroup
+
+command:
+  'kepubify --version':
+    exit-status: 0
+  'python3 --version':
+    exit-status: 0
+  'supercronic --version':
+    exit-status: 0
+  'ebook-convert --version':
+    exit-status: 0
+  'calibredb --version':
+    exit-status: 0
+  'fetch-ebook-metadata --version':
+    exit-status: 0
+  'file /usr/bin/chown':
+    exit-status: 0
+    stdout:
+      - 'POSIX shell script, ASCII text executable'
+
+process:
+  python3:
+    running: true
+  supercronic:
+    running: true
