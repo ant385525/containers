@@ -45,7 +45,7 @@ RUN \
     && rm -rf /var/lib/apt/lists/*
 
 
-FROM docker.io/library/python:3.12-slim AS runtime
+FROM docker.io/library/python:3.13-slim AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
