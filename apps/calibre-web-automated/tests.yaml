@@ -1,34 +1,95 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+
 port:
   tcp:8083:
     listening: true
+
 http:
-  http://localhost:5000/api/status:
+  http://localhost:8083/login:
     status: 200
-link:
-  /usr/local/bin/ffmpeg:
-    exists: true
-    target: "/usr/lib/jellyfin-ffmpeg/ffmpeg"
-  /usr/local/bin/ffmpeg7:
-    exists: true
-    target: "/usr/lib/jellyfin-ffmpeg/ffmpeg"
-  /usr/local/bin/ffprobe:
-    exists: true
-    target: "/usr/lib/jellyfin-ffmpeg/ffprobe"
-command:
-  "ffmpeg -version":
-    exit-status: 0
-    stdout:
-      - '/^ffmpeg version 7\.[0-9]+\.[0-9]+-Jellyfin.*$/'
-  # Ensure i18n hack worked
-  'ls -A /app/Server/wwwroot/i18n/':
-    exit-status: 0
-    stdout:
-      - '/^.+$/'
+
 file:
-  /app/Data/Data/FileFlows.sqlite:
+  /usr/local/bin/supercronic:
+    exists: true
+    mode: "0755"
+  /usr/bin/kepubify:
+    exists: true
+    mode: "0755"
+  # Ensure it's removed
+  /usr/bin/chown:
+    exists: true
+    mode: "0755"
+    owner: root
+    group: root
+    content:
+      - '^#!/bin/sh'
+  /config/cwa.db:
+    exists: true
+    mode: "0644"
+    owner: nobody
+    group: nogroup
+  /config/app.db:
+    exists: true
+    mode: "0644"
+    owner: nobody
+    group: nogroup
+  /app/calibre-web/cps/cwa_functions.py:
+    exists: true
+    mode: "0755"
+
+link:
+  /usr/bin/calibredb:
+    exists: true
+    target: "/app/calibre/calibredb"
+
+dir:
+  /app/calibre-web:
     exists: true
     owner: nobody
     group: nogroup
-    mode: "0644"
+    mode: "0755"
+  /app/calibre-web-automated:
+    exists: true
+    owner: nobody
+    group: nogroup
+    mode: "0755"
+  /cwa-book-ingest:
+    exists: true
+    owner: nobody
+    group: nogroup
+    mode: "0755"
+  /calibre-library:
+    exists: true
+    owner: nobody
+    group: nogroup
+    mode: "0755"
+  /config:
+    exists: true
+    owner: nobody
+    group: nogroup
+    mode: "0755"
+
+command:
+  'kepubify --version':
+    exit-status: 0
+  'python3 --version':
+    exit-status: 0
+  'supercronic --version':
+    exit-status: 0
+  'ebook-convert --version':
+    exit-status: 0
+  'calibredb --version':
+    exit-status: 0
+  'fetch-ebook-metadata --version':
+    exit-status: 0
+  'chown':
+    exit-status: 0
+
+process:
+  python3:
+    running: true
+    user: nobody
+  supercronic:
+    running: true
+    user: nobody

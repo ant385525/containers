@@ -22,6 +22,5 @@ bash /init-scripts/cwa-ingest-service.sh &
 bash /init-scripts/cwa-metadata-service.sh &
 
 echo "services started. Starting app..."
-# sleep 1d
 # start app
 exec python3 /app/calibre-web/cps.py

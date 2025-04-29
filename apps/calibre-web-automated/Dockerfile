@@ -15,7 +15,6 @@ RUN \
     && cp -r root/app/calibre-web/cps/* /app/calibre-web/cps/ \
     && rm -rf /tmp/cwa
 
-
 FROM python:3.12-slim AS builder
 ENV \
     DEBIAN_FRONTEND=noninteractive \
@@ -40,6 +39,7 @@ RUN \
         -r /calibre-web/requirements.txt \
         -r /calibre-web/optional-requirements.txt \
     && apt-get purge -y --auto-remove \
+        gcc \
         libldap2-dev \
         libsasl2-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -49,6 +49,7 @@ FROM docker.io/library/python:3.12-slim AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
+# renovate: datasource=github-releases depName=aptible/supercronic
 ARG SUPERCRONIC_VERSION=v0.2.33
 
 ENV \
@@ -85,7 +86,7 @@ COPY . /
 
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        ca-certificates \
+        # ca-certificates \
         curl \
         catatonit \
         file \
@@ -103,8 +104,8 @@ RUN \
     # Setup directories from setup-cwa.sh
     && mkdir -p /app/calibre-web-automated/metadata_change_logs /app/calibre-web-automated/metadata_temp \
     /cwa-book-ingest /calibre-library \
-    && chown -R nobody:nogroup /app/calibre-web-automated /cwa-book-ingest /calibre-library \
-    && chmod -R 755 /app/calibre-web-automated /cwa-book-ingest /calibre-library \
+    && chown -R nobody:nogroup /app /cwa-book-ingest /calibre-library \
+    && chmod -R 755 /app /cwa-book-ingest /calibre-library \
     # Setup config directories from cwa-init
     && mkdir -p /config/processed_books/converted /config/processed_books/imported /config/processed_books/failed \
         /config/processed_books/fixed_originals /config/log_archive /config/.cwa_conversion_tmp \

@@ -3,5 +3,4 @@
 set -euo pipefail
 
 echo "[auto-zipper] Enabling cronjob..."
-# TODO
 exec supercronic "/etc/cron.d/auto_zip"
