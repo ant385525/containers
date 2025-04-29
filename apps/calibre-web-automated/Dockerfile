@@ -15,7 +15,7 @@ RUN \
     && cp -r root/app/calibre-web/cps/* /app/calibre-web/cps/ \
     && rm -rf /tmp/cwa
 
-FROM python:3.12-slim AS builder
+FROM python:3.13-slim AS builder
 ENV \
     DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
