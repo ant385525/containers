@@ -49,8 +49,6 @@ FROM docker.io/library/python:3.12-slim AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
-# renovate: datasource=github-releases depName=aptible/supercronic
-ARG SUPERCRONIC_VERSION=v0.2.33
 
 ENV \
     DEBIAN_FRONTEND=noninteractive \

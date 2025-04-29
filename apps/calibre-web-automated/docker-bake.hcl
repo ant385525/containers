@@ -1,11 +1,17 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
+  // renovate: datasource=github-releases depName=crocodilestick/Calibre-Web-Automated.Releases
   default = "3.0.4"
 }
 
 variable "SOURCE" {
   default = "https://github.com/crocodilestick/Calibre-Web-Automated"
+}
+
+variable "SUPERCRONIC_VERSION" {
+  // renovate: datasource=github-releases depName=aptible/supercronic.Releases
+  default = "v0.2.33"
 }
 
 group "default" {
