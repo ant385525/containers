@@ -33,5 +33,12 @@
       matchPackageNames: ["/ubuntu/"],
       allowedVersions: "/24\\.04/",
     },
+    {
+      description: ["Allowed Python Version for Calibre-Web-Automated"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["apps/calibre-web-automated/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.12/",
+    },
   ],
 }
