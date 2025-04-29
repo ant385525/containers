@@ -27,37 +27,31 @@ file:
     owner: nobody
     group: nogroup
 
-link:
-  /usr/bin/calibredb:
-    exists: true
-    target: "/app/calibre/calibredb"
-
 dir:
+  /app/calibre:
+    exists: true
+    owner: nobody
+    group: nogroup
   /app/calibre-web:
     exists: true
     owner: nobody
     group: nogroup
-    mode: "0755"
   /app/calibre-web-automated:
     exists: true
     owner: nobody
     group: nogroup
-    mode: "0755"
   /cwa-book-ingest:
     exists: true
     owner: nobody
     group: nogroup
-    mode: "0755"
   /calibre-library:
     exists: true
     owner: nobody
     group: nogroup
-    mode: "0755"
   /config:
     exists: true
     owner: nobody
     group: nogroup
-    mode: "0755"
 
 command:
   'kepubify --version':
