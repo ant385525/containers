@@ -89,7 +89,5 @@ command:
 process:
   python3:
     running: true
-    user: nobody
   supercronic:
     running: true
-    user: nobody
