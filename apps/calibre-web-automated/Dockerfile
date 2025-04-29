@@ -59,7 +59,7 @@ ENV \
     PIP_ROOT_USER_ACTION=ignore \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 
+    PIP_BREAK_SYSTEM_PACKAGES=1
 ENV UMASK="0002" \
     TZ="Etc/UTC" \
     APP_MODE="production" \
@@ -85,14 +85,17 @@ COPY . /
 
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        # ca-certificates \
         curl \
         catatonit \
         file \
         ghostscript \
         inotify-tools \
+        libegl1-mesa \
+        libgl1-mesa-glx \
         libmagic1 \
         libnss3 \
+        libopengl0 \
+        libxkbcommon0 \
         sqlite3 \
     # Add cronjob
     && echo "@daily python3 /app/calibre-web-automated/scripts/auto_zip.py" \

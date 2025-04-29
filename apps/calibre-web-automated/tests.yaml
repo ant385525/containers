@@ -70,6 +70,8 @@ command:
     exit-status: 0
   'calibredb --version':
     exit-status: 0
+  'fetch-ebook-metadata --version':
+    exit-status: 0
   'file /usr/bin/chown':
     exit-status: 0
     stdout:
