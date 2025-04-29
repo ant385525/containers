@@ -22,16 +22,16 @@ file:
     mode: "0755"
     owner: root
     group: root
-    contains:
+    contents:
       - '^#!/bin/sh'
   /config/cwa.db:
     exists: true
-    mode: "0644"
+    mode: "0755"
     owner: nobody
     group: nogroup
   /config/app.db:
     exists: true
-    mode: "0644"
+    mode: "0755"
     owner: nobody
     group: nogroup
   /app/calibre-web/cps/cwa_functions.py:
@@ -80,8 +80,6 @@ command:
   'ebook-convert --version':
     exit-status: 0
   'calibredb --version':
-    exit-status: 0
-  'fetch-ebook-metadata --version':
     exit-status: 0
   'chown':
     exit-status: 0
