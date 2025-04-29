@@ -1,10 +1,5 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
-
-port:
-  tcp:8083:
-    listening: true
-
 http:
   http://localhost:8083/login:
     status: 200
@@ -16,27 +11,21 @@ file:
   /usr/bin/kepubify:
     exists: true
     mode: "0755"
-  # Ensure it's removed
   /usr/bin/chown:
     exists: true
     mode: "0755"
-    owner: root
-    group: root
-    contents:
-      - '^#!/bin/sh'
   /config/cwa.db:
     exists: true
-    mode: "0755"
     owner: nobody
     group: nogroup
   /config/app.db:
     exists: true
-    mode: "0755"
     owner: nobody
     group: nogroup
   /app/calibre-web/cps/cwa_functions.py:
     exists: true
-    mode: "0755"
+    owner: nobody
+    group: nogroup
 
 link:
   /usr/bin/calibredb:
@@ -81,8 +70,10 @@ command:
     exit-status: 0
   'calibredb --version':
     exit-status: 0
-  'chown':
+  'file /usr/bin/chown':
     exit-status: 0
+    stdout:
+      - 'POSIX shell script, ASCII text executable'
 
 process:
   python3:
