@@ -49,6 +49,7 @@ FROM docker.io/library/python:3.12-slim AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
+ARG SUPERCRONIC_VERSION
 
 ENV \
     DEBIAN_FRONTEND=noninteractive \
