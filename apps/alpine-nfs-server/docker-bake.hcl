@@ -1,12 +1,17 @@
 target "docker-metadata-action" {}
 
 variable "VERSION" {
-  // renovate: datasource=custom.fileflows depName=fileflows versioning=loose
-  default = "25.5.1.5375"
+  // renovate: datasource=alpine depName=nfs-utils versioning=apk
+  default = "2.6.4-r4"
+}
+
+variable "RPCBIND_VERSION" {
+  // renovate: datasource=alpine depName=rpcbind versioning=apk
+  default = "1.2.7-r0"
 }
 
 variable "SOURCE" {
-  default = "https://github.com/revenz/fileflows"
+  default = "https://linux-nfs.org/"
 }
 
 group "default" {
@@ -17,6 +22,7 @@ target "image" {
   inherits = ["docker-metadata-action"]
   args = {
     VERSION = "${VERSION}"
+    RPCBIND_VERSION = "${RPCBIND_VERSION}"
   }
   labels = {
     "org.opencontainers.image.source" = "${SOURCE}"
