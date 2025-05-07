@@ -13,6 +13,7 @@ WORKDIR /app
 COPY . /
 
 RUN apk add \
+    catatonit \
     nfs-utils=${VERSION} \
     # renovate: datasource=alpine depName=rpcbind versioning=apk
     rpcbind=${RPCBIND_VERSION} \
@@ -21,4 +22,4 @@ RUN apk add \
 
 EXPOSE 2049 111 20048
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "-g", "--", "/entrypoint.sh"]
