@@ -16,6 +16,7 @@ RUN apk add \
     nfs-utils=${VERSION} \
     # renovate: datasource=alpine depName=rpcbind versioning=apk
     rpcbind=${RPCBIND_VERSION} \
+    && mkdir /exports \
     && chmod +x /entrypoint.sh
 
 EXPOSE 2049 111 20048
