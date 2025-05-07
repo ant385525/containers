@@ -4,5 +4,5 @@ port:
   tcp:2049:
     listening: true
 file:
-  /exports:
+  /etc/exports:
     exists: true
