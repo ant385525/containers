@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=alpine depName=nfs-utils versioning=apk
-  default = "2.6.4-r4"
+  default = "2.6.4-r3"
 }
 
 variable "RPCBIND_VERSION" {
