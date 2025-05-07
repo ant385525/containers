@@ -123,7 +123,10 @@ RUN \
     # Hack for hardcoded chowns everywhere
     && rm /usr/bin/chown \
     && printf '%s\n' '#!/bin/sh' 'exit 0' > /usr/bin/chown \
-    && chmod +x /usr/bin/chown
+    && chmod +x /usr/bin/chown \
+    # Hack until dirs.json is fixed
+    && mkdir -p /var/tmp/calibre-web-automated \
+    && mv /app/calibre-web-automated/* /var/tmp/calibre-web-automated/
 
 USER nobody:nogroup
 ENTRYPOINT ["/usr/bin/catatonit", "-g", "--", "/entrypoint.sh"]

@@ -2,6 +2,9 @@
 set -euo pipefail
 
 echo "Starting Calibre Web Automated"
+
+# Hack for dirs.json
+mv /var/tmp/calibre-web-automated/* /app/calibre-web-automated/
 echo "Running init scripts..."
 
 # https://github.com/crocodilestick/Calibre-Web-Automated/blob/main/root/etc/s6-overlay/s6-rc.d/cwa-init/run
