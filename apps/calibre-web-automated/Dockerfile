@@ -71,7 +71,7 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 COPY --from=ghcr.io/bjw-s-labs/kepubify:4.0.4 /app/kepubify /usr/bin/kepubify
-COPY --from=ghcr.io/cdloh/calibre-bare:8.3.0 / /app/calibre
+COPY --from=ghcr.io/cdloh/calibre-bare:8.4.0 / /app/calibre
 COPY --from=ghcr.io/linuxserver/unrar:7.1.6 /usr/bin/unrar-ubuntu /usr/bin/unrar
 COPY --from=ghcr.io/bjw-s-labs/calibre-web:0.6.24 /app /app/calibre-web
 COPY --from=cwa-download /app/calibre-web/cps/* /app/calibre-web/cps/
