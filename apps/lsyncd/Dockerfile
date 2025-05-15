@@ -13,6 +13,10 @@ USER root
 WORKDIR /app
 COPY . /
 
-RUN apk add --no-cache catatonit lsyncd=${VERSION}
+RUN apk add --no-cache catatonit lsyncd=${VERSION} \
+    && mkdir /source /target \
+    && chown -R nobody:nogroup /source /target
+
+USER nobody:nogroup
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "lsyncd", "-nodaemon", "/lsyncd.conf.lua"]
