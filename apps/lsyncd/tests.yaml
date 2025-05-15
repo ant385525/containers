@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+link:
+  /usr/bin/lsyncd:
+    exists: true
+command:
+  "lsyncd -version":
+    exit-status: 0
+file:
+  /lsyncd.conf.lua:
+    exists: true
+dir:
+  /source:
+    exists: true
+    owner: nobody
+    group: nogroup
+  /target:
+    exists: true
+    owner: nobody
+    group: nogroup
+process:
+  lsyncd:
+    running: true
