@@ -71,14 +71,14 @@ RUN \
         libfreetype6 \
         pciutils \
     # Intel HW
-    if [ "${TARGETARCH}" = "amd64" ] then \
+    if [ "${TARGETARCH}" = "amd64" ]; then \
       mkdir -p /tmp/intel-compute-runtime && cd /tmp/intel-compute-runtime \
       && curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb \
       && curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb \
       && curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
       && curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb \
       && dpkg -i --force-all ./*.deb \
-      && cd / \
+      && cd /; \
     fi \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
