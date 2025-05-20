@@ -71,8 +71,8 @@ RUN apt-get update \
     && if [ "${TARGETARCH}" = "amd64" ]; then \
         mkdir -p /tmp/intel-compute-runtime \
         && curl -Lo /tmp/intel-compute-runtime/libigdgmm.deb https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb \
-        && curl -Lo /tmp/intel-compute-runtime/intel-igc-core.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb \
-        && curl -Lo /tmp/intel-compute-runtime/intel-igc-opencl.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
+        && curl -Lo /tmp/intel-compute-runtime/intel-igc-core.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.10.8/intel-igc-core-2_2.11.7+19146_amd64.deb \
+        && curl -Lo /tmp/intel-compute-runtime/intel-igc-opencl.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.10.8/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
         && curl -Lo /tmp/intel-compute-runtime/intel-opencl-icd.deb https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb \
         && apt-get install -y --no-install-recommends /tmp/intel-compute-runtime/*.deb; \
     fi \
