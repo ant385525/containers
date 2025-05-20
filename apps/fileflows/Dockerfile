@@ -57,30 +57,26 @@ USER root
 COPY --from=fileflows-download /app /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
-RUN \
-    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        # Can uninstall before build
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends --no-install-suggests \
         apt-transport-https \
         curl \
         gnupg \
-        # Needed for FF to run
         aspnetcore-runtime-8.0 \
         ca-certificates \
         catatonit \
         libfontconfig1 \
         libfreetype6 \
         pciutils \
-    # Intel HW
-    if [ "${TARGETARCH}" = "amd64" ]; then \
-      mkdir -p /tmp/intel-compute-runtime && cd /tmp/intel-compute-runtime \
-      && curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb \
-      && curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb \
-      && curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
-      && curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb \
-      && dpkg -i --force-all ./*.deb \
-      && cd /; \
+    && if [ "${TARGETARCH}" = "amd64" ]; then \
+        mkdir -p /tmp/intel-compute-runtime && cd /tmp/intel-compute-runtime && \
+        curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb && \
+        curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb && \
+        curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb && \
+        curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb && \
+        dpkg -i --force-all ./*.deb && \
+        cd /; \
     fi \
-    # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
@@ -89,21 +85,18 @@ RUN \
     && apt-get update \
     && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
-    # ffmpeg link
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
-    # Clean up unnecessary packages
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
         curl \
         gnupg \
     && apt-get autoremove -y \
     && apt-get clean \
-    # Clean up image
     && rm -rf /var/lib/apt/lists/* /tmp/* \
-    # i18n hack
     && mkdir -p /var/tmp/i18n && mv /app/Server/wwwroot/i18n/* /var/tmp/i18n
+
 
 COPY . /
 RUN chmod +x /entrypoint.sh
