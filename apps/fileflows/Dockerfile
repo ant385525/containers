@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.10 AS fileflows-download
+FROM docker.io/library/ubuntu:24.04 AS fileflows-download
 ARG VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -33,7 +33,7 @@ RUN \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-FROM docker.io/library/ubuntu:24.10 AS runtime
+FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
@@ -53,22 +53,38 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PORT="5000"
 
 USER root
-WORKDIR /app
 
 COPY --from=fileflows-download /app /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        # Can uninstall before build
         apt-transport-https \
         curl \
-        ca-certificates \
         gnupg \
+        # Needed for FF to run
+        aspnetcore-runtime-8.0 \
+        ca-certificates \
+        catatonit \
+        libfontconfig1 \
+        libfreetype6 \
+        pciutils \
+    # Intel HW
+    if [ "${TARGETARCH}" = "amd64" ] then \
+      mkdir -p /tmp/intel-compute-runtime && cd /tmp/intel-compute-runtime \
+      && curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb \
+      && curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb \
+      && curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
+      && curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb \
+      && dpkg -i --force-all ./*.deb \
+      && cd / \
+    fi \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
-    && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu noble main" \
+    && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
         > /etc/apt/sources.list.d/jellyfin.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends --no-install-suggests \
@@ -77,23 +93,6 @@ RUN \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
-    # Needed for FF to run
-    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        aspnetcore-runtime-8.0 \
-        catatonit \
-        libfontconfig1 \
-        libfreetype6 \
-        pciutils \
-        # Intel HW
-        vainfo \
-        libva2 \
-    && \
-        if [ "${TARGETARCH}" = "amd64" ]; then \
-            apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                i965-va-driver-shaders \
-                libmfx-gen1.2; \
-        fi \
     # Clean up unnecessary packages
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
@@ -102,13 +101,14 @@ RUN \
     && apt-get autoremove -y \
     && apt-get clean \
     # Clean up image
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
     # i18n hack
     && mkdir -p /var/tmp/i18n && mv /app/Server/wwwroot/i18n/* /var/tmp/i18n
 
 COPY . /
 RUN chmod +x /entrypoint.sh
 
+WORKDIR /app
 USER nobody:nogroup
 VOLUME ["/app/Data"]
 
