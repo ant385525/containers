@@ -74,7 +74,11 @@ RUN apt-get update \
         curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-core-2_2.11.7+19146_amd64.deb && \
         curl -LO https://github.com/intel/intel-graphics-compiler/releases/download/v2.11.7/intel-igc-opencl-2_2.11.7+19146_amd64.deb && \
         curl -LO https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb && \
-        dpkg -i --force-all ./*.deb && \
+        && apt-get install -y --no-install-recommends --no-install-suggests \
+            ./libigdgmm12_22.7.0_amd64.deb \
+            ./intel-igc-core-2_2.11.7+19146_amd64.deb \
+            ./intel-igc-opencl-2_2.11.7+19146_amd64.deb \
+            ./intel-opencl-icd_25.13.33276.16_amd64.deb \
         cd /; \
     fi \
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
