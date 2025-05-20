@@ -64,8 +64,13 @@ RUN \
         curl \
         ca-certificates \
         gnupg \
-    # Install ffmpeg
+    # Add intel repos for up-to-date drivers
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
+    && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
+        | gpg --dearmor -o /etc/apt/trusted.gpg.d/intel-graphics.gpg \
+    && echo "deb [arch=${TARGETARCH}] https://repositories.intel.com/graphics/ubuntu jammy main" \
+        > /etc/apt/sources.list.d/intel-graphics.list \
+    # Install ffmpeg
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
