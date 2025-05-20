@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.04 AS fileflows-download
+FROM docker.io/library/ubuntu:24.10@sha256:aadf9a3f5eda81295050d13dabe851b26a67597e424a908f25a63f589dfed48f AS fileflows-download
 ARG VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -33,7 +33,7 @@ RUN \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-FROM docker.io/library/ubuntu:24.04 AS runtime
+FROM docker.io/library/ubuntu:24.10@sha256:aadf9a3f5eda81295050d13dabe851b26a67597e424a908f25a63f589dfed48f AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
