@@ -68,7 +68,7 @@ RUN \
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/intel-graphics.gpg \
-    && echo "deb [arch=${TARGETARCH}] https://repositories.intel.com/graphics/ubuntu ${VERSION_CODENAME} main" \
+    && echo "deb [arch=${TARGETARCH}] https://repositories.intel.com/graphics/ubuntu jammy main" \
         > /etc/apt/sources.list.d/intel-graphics.list \
     # Install ffmpeg
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
