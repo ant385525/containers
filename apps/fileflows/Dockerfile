@@ -53,24 +53,30 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PORT="5000"
 
 USER root
-WORKDIR /app
 
 COPY --from=fileflows-download /app /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
-RUN \
-    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends --no-install-suggests \
         apt-transport-https \
         curl \
-        ca-certificates \
         gnupg \
-    # Add intel repos for up-to-date drivers
+        aspnetcore-runtime-8.0 \
+        ca-certificates \
+        catatonit \
+        libfontconfig1 \
+        libfreetype6 \
+        pciutils \
+    && if [ "${TARGETARCH}" = "amd64" ]; then \
+        mkdir -p /tmp/intel-compute-runtime \
+        && curl -Lo /tmp/intel-compute-runtime/libigdgmm.deb https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb \
+        && curl -Lo /tmp/intel-compute-runtime/intel-igc-core.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.10.8/intel-igc-core-2_2.11.7+19146_amd64.deb \
+        && curl -Lo /tmp/intel-compute-runtime/intel-igc-opencl.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.10.8/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
+        && curl -Lo /tmp/intel-compute-runtime/intel-opencl-icd.deb https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb \
+        && apt-get install -y --no-install-recommends /tmp/intel-compute-runtime/*.deb; \
+    fi \
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
-    && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
-        | gpg --dearmor -o /etc/apt/trusted.gpg.d/intel-graphics.gpg \
-    && echo "deb [arch=${TARGETARCH}] https://repositories.intel.com/graphics/ubuntu jammy main" \
-        > /etc/apt/sources.list.d/intel-graphics.list \
-    # Install ffmpeg
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
@@ -78,42 +84,23 @@ RUN \
     && apt-get update \
     && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
-    # ffmpeg link
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
-    # Needed for FF to run
-    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        aspnetcore-runtime-8.0 \
-        catatonit \
-        libfontconfig1 \
-        libfreetype6 \
-        pciutils \
-        # Intel HW
-        vainfo \
-        libva2 \
-    && \
-        if [ "${TARGETARCH}" = "amd64" ]; then \
-            apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                i965-va-driver-shaders \
-                libmfx-gen1.2; \
-        fi \
-    # Clean up unnecessary packages
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
         curl \
         gnupg \
     && apt-get autoremove -y \
     && apt-get clean \
-    # Clean up image
-    && rm -rf /var/lib/apt/lists/* \
-    # i18n hack
+    && rm -rf /var/lib/apt/lists/* /tmp/* \
     && mkdir -p /var/tmp/i18n && mv /app/Server/wwwroot/i18n/* /var/tmp/i18n
+
 
 COPY . /
 RUN chmod +x /entrypoint.sh
 
+WORKDIR /app
 USER nobody:nogroup
 VOLUME ["/app/Data"]
 
