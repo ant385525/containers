@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.10@sha256:aadf9a3f5eda81295050d13dabe851b26a67597e424a908f25a63f589dfed48f AS fileflows-download
+FROM docker.io/library/ubuntu:24.04 AS fileflows-download
 ARG VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
@@ -33,7 +33,7 @@ RUN \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-FROM docker.io/library/ubuntu:24.10@sha256:aadf9a3f5eda81295050d13dabe851b26a67597e424a908f25a63f589dfed48f AS runtime
+FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
@@ -64,8 +64,13 @@ RUN \
         curl \
         ca-certificates \
         gnupg \
-    # Install ffmpeg
+    # Add intel repos for up-to-date drivers
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
+    && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
+        | gpg --dearmor -o /etc/apt/trusted.gpg.d/intel-graphics.gpg \
+    && echo "deb [arch=${TARGETARCH}] https://repositories.intel.com/graphics/ubuntu ${VERSION_CODENAME} main" \
+        > /etc/apt/sources.list.d/intel-graphics.list \
+    # Install ffmpeg
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
