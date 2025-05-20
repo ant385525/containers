@@ -60,9 +60,9 @@ COPY --from=fileflows-download /app /app
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        # Can uninstall before build
         apt-transport-https \
         curl \
+        ca-certificates \
         gnupg \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
@@ -80,7 +80,6 @@ RUN \
     # Needed for FF to run
     && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         aspnetcore-runtime-8.0 \
-        ca-certificates \
         catatonit \
         libfontconfig1 \
         libfreetype6 \
