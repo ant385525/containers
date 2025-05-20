@@ -60,26 +60,10 @@ COPY --from=fileflows-download /app /app
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        # Can uninstall before build
         apt-transport-https \
         curl \
-        gnupg \
-        # Needed for FF to run
-        aspnetcore-runtime-8.0 \
         ca-certificates \
-        catatonit \
-        libfontconfig1 \
-        libfreetype6 \
-        pciutils \
-        # Intel HW
-        libva2 \
-    && \
-        if [ "${TARGETARCH}" = "amd64" ]; then \
-            apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                i965-va-driver-shaders \
-                libmfx-gen1.2; \
-        fi \
+        gnupg \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
@@ -93,6 +77,23 @@ RUN \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
+    # Needed for FF to run
+    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        aspnetcore-runtime-8.0 \
+        catatonit \
+        libfontconfig1 \
+        libfreetype6 \
+        pciutils \
+        # Intel HW
+        vainfo \
+        libva2 \
+    && \
+        if [ "${TARGETARCH}" = "amd64" ]; then \
+            apt-get install -y --no-install-recommends --no-install-suggests \
+                intel-media-va-driver-non-free \
+                i965-va-driver-shaders \
+                libmfx-gen1.2; \
+        fi \
     # Clean up unnecessary packages
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
