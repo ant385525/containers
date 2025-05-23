@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=custom.fileflows depName=fileflows versioning=loose
-  default = "25.5.3.5467"
+  default = "25.5.3.5468"
 }
 
 variable "SOURCE" {
