@@ -5,6 +5,11 @@ variable "VERSION" {
   default = "25.5.3.5468"
 }
 
+variable "FFMPEG_VERSION" {
+  // # renovate: datasource=apt package=jellyfin-ffmpeg7 versioning=loose
+  default = "7.1.1-3-noble"
+}
+
 variable "SOURCE" {
   default = "https://github.com/revenz/fileflows"
 }
@@ -17,6 +22,7 @@ target "image" {
   inherits = ["docker-metadata-action"]
   args = {
     VERSION = "${VERSION}"
+    FFMPEG_VERSION = "${FFMPEG_VERSION}"
   }
   labels = {
     "org.opencontainers.image.source" = "${SOURCE}"
