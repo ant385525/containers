@@ -75,7 +75,7 @@ RUN \
     && echo "deb [arch=${TARGETARCH}] http://archive.ubuntu.com/ubuntu oracular main universe" \
         > /etc/apt/sources.list.d/oracular.list \
     && printf "Package: libva2\nPin: release n=oracular\nPin-Priority: 990\n" \
-        > /etc/apt/preferences.d/99-libva-pin.pref; \
+        > /etc/apt/preferences.d/99-libva-pin.pref \
     && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         libva2 \
     # Intel HW
