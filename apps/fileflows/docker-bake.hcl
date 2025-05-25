@@ -6,7 +6,7 @@ variable "VERSION" {
 }
 
 variable "FFMPEG_VERSION" {
-  // # renovate: datasource=apt package=jellyfin-ffmpeg7 versioning=loose
+  // renovate: datasource=apt package=jellyfin-ffmpeg7 versioning=loose
   default = "7.1.1-3-noble"
 }
 
