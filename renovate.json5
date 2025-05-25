@@ -45,7 +45,7 @@
       "matchDatasources": ["deb"],
       "matchPackageNames": ["jellyfin-ffmpeg7"],
       "registryUrls": [
-        "https://repo.jellyfin.org/ubuntu?suite=jammy&components=main"
+        "https://repo.jellyfin.org/ubuntu?suite=jammy&components=main&binaryArch=amd64"
       ]
     },
   ],
