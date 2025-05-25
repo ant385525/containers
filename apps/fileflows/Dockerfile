@@ -72,8 +72,10 @@ RUN \
         libfreetype6 \
         pciutils \
     # libva 2.20 needed for jellyfin-ffmpeg
-    && echo "deb [arch=${TARGETARCH}] http://archive.ubuntu.com/ubuntu oracular main universe" \
+    && echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu oracular main universe" \
         > /etc/apt/sources.list.d/oracular.list \
+    && echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports oracular main universe" \
+        >> /etc/apt/sources.list.d/oracular.list \
     && printf "Package: libva2\nPin: release n=oracular\nPin-Priority: 990\n" \
         > /etc/apt/preferences.d/99-libva-pin.pref \
     && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
