@@ -40,5 +40,13 @@
       matchPackageNames: ["/python/"],
       allowedVersions: "/3\\.12/",
     },
+    {
+      description: ["Repository to lookup jellyfin-ffmpeg7"],
+      "matchDatasources": ["deb"],
+      "matchPackageNames": ["jellyfin-ffmpeg7"],
+      "registryUrls": [
+        "https://repo.jellyfin.org/ubuntu"
+      ]
+    },
   ],
 }

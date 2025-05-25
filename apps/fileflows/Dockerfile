@@ -72,7 +72,7 @@ RUN \
         libfontconfig1 \
         libfreetype6 \
         pciutils \
-    # libva 2.20 needed for jellyfin-ffmpeg
+    # libva 2.21 needed for jellyfin-ffmpeg
     && echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu oracular main universe" \
         > /etc/apt/sources.list.d/oracular.list \
     && echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports oracular main universe" \
