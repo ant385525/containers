@@ -60,17 +60,36 @@ COPY --from=fileflows-download /app /app
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
     apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        # Can uninstall before build
         apt-transport-https \
         curl \
-        ca-certificates \
         gnupg \
-    # Add intel repos for up-to-date drivers
-    && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
-    && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
-        | gpg --dearmor -o /etc/apt/trusted.gpg.d/intel-graphics.gpg \
-    && echo "deb [arch=${TARGETARCH}] https://repositories.intel.com/graphics/ubuntu jammy main" \
-        > /etc/apt/sources.list.d/intel-graphics.list \
+        # Needed for FF to run
+        aspnetcore-runtime-8.0 \
+        ca-certificates \
+        catatonit \
+        libfontconfig1 \
+        libfreetype6 \
+        pciutils \
+    # libva 2.20 needed for jellyfin-ffmpeg
+    && echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu oracular main universe" \
+        > /etc/apt/sources.list.d/oracular.list \
+    && echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports oracular main universe" \
+        >> /etc/apt/sources.list.d/oracular.list \
+    && printf "Package: libva2\nPin: release n=oracular\nPin-Priority: 990\n" \
+        > /etc/apt/preferences.d/99-libva-pin.pref \
+    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        libva2 \
+    # Intel HW
+    && \
+        if [ "${TARGETARCH}" = "amd64" ]; then \
+            apt-get install -y --no-install-recommends --no-install-suggests \
+                intel-media-va-driver-non-free \
+                i965-va-driver-shaders \
+                libmfx-gen1.2; \
+        fi \
     # Install ffmpeg
+    && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
@@ -82,23 +101,6 @@ RUN \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
-    # Needed for FF to run
-    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        aspnetcore-runtime-8.0 \
-        catatonit \
-        libfontconfig1 \
-        libfreetype6 \
-        pciutils \
-        # Intel HW
-        vainfo \
-        libva2 \
-    && \
-        if [ "${TARGETARCH}" = "amd64" ]; then \
-            apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                i965-va-driver-shaders \
-                libmfx-gen1.2; \
-        fi \
     # Clean up unnecessary packages
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
