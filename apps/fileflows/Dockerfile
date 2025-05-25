@@ -53,29 +53,40 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     PORT="5000"
 
 USER root
+WORKDIR /app
 
 COPY --from=fileflows-download /app /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends --no-install-suggests \
+RUN \
+    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        # Can uninstall before build
         apt-transport-https \
         curl \
         gnupg \
+        # Needed for FF to run
         aspnetcore-runtime-8.0 \
         ca-certificates \
         catatonit \
         libfontconfig1 \
         libfreetype6 \
         pciutils \
-    && if [ "${TARGETARCH}" = "amd64" ]; then \
-        mkdir -p /tmp/intel-compute-runtime \
-        && curl -Lo /tmp/intel-compute-runtime/libigdgmm.deb https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/libigdgmm12_22.7.0_amd64.deb \
-        && curl -Lo /tmp/intel-compute-runtime/intel-igc-core.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.10.8/intel-igc-core-2_2.11.7+19146_amd64.deb \
-        && curl -Lo /tmp/intel-compute-runtime/intel-igc-opencl.deb https://github.com/intel/intel-graphics-compiler/releases/download/v2.10.8/intel-igc-opencl-2_2.11.7+19146_amd64.deb \
-        && curl -Lo /tmp/intel-compute-runtime/intel-opencl-icd.deb https://github.com/intel/compute-runtime/releases/download/25.13.33276.16/intel-opencl-icd_25.13.33276.16_amd64.deb \
-        && apt-get install -y --no-install-recommends /tmp/intel-compute-runtime/*.deb; \
-    fi \
+    # libva 2.20 needed for jellyfin-ffmpeg
+    && echo "deb [arch=${TARGETARCH}] http://archive.ubuntu.com/ubuntu oracular main universe" \
+        > /etc/apt/sources.list.d/oracular.list \
+    && printf "Package: libva2\nPin: release n=oracular\nPin-Priority: 990\n" \
+        > /etc/apt/preferences.d/99-libva-pin.pref; \
+    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+        libva2 \
+    # Intel HW
+    && \
+        if [ "${TARGETARCH}" = "amd64" ]; then \
+            apt-get install -y --no-install-recommends --no-install-suggests \
+                intel-media-va-driver-non-free \
+                i965-va-driver-shaders \
+                libmfx-gen1.2; \
+        fi \
+    # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
@@ -84,23 +95,25 @@ RUN apt-get update \
     && apt-get update \
     && apt-get install -y --no-install-recommends --no-install-suggests \
         jellyfin-ffmpeg7 \
+    # ffmpeg link
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/local/bin/ffprobe \
+    # Clean up unnecessary packages
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
         apt-transport-https \
         curl \
         gnupg \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* \
+    # Clean up image
+    && rm -rf /var/lib/apt/lists/* \
+    # i18n hack
     && mkdir -p /var/tmp/i18n && mv /app/Server/wwwroot/i18n/* /var/tmp/i18n
-
 
 COPY . /
 RUN chmod +x /entrypoint.sh
 
-WORKDIR /app
 USER nobody:nogroup
 VOLUME ["/app/Data"]
 
