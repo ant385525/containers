@@ -37,6 +37,7 @@ FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
+ARG FFMPEG_VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     UMASK="0002" \
@@ -96,7 +97,7 @@ RUN \
         > /etc/apt/sources.list.d/jellyfin.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends --no-install-suggests \
-        jellyfin-ffmpeg7 \
+        jellyfin-ffmpeg7=${FFMPEG_VERSION} \
     # ffmpeg link
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg \
     && ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/local/bin/ffmpeg7 \
