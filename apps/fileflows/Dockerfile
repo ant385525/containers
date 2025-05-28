@@ -67,6 +67,7 @@ RUN \
         catatonit \
         libfontconfig1 \
         libfreetype6 \
+        ocl-icd-libopencl1 \
         pciutils \
     # Intel Compute Runtime
     # Taken from https://github.com/hotio/jellyfin/blob/12625b856cf719b36431aff9de5519885b33041d/linux-amd64.Dockerfile#L29-L42
@@ -81,9 +82,7 @@ RUN \
             && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-core_1.0.17537.20_amd64.deb" >> list.txt \
             && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-opencl_1.0.17537.20_amd64.deb" >> list.txt \
             && wget -q -i list.txt \
-            # Apt to resolve dependencies
-            && apt install -y --no-install-recommends --no-install-suggests \
-                ./$(ls *.deb) \
+            && dpkg -i *.deb \
             && cd .. \
             rm -rf /tmp/*; \
         fi \
