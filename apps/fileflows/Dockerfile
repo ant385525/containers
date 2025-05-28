@@ -67,16 +67,15 @@ RUN \
         pciutils \
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && \
-        # add intel apt repo for up-to-date packages
+        # add plucky repo for up-to-date packages
         if [ "${TARGETARCH}" = "amd64" ]; then \
-            curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
-                | gpg --dearmor > /usr/share/keyrings/intel.gpg \
-            && echo "deb [arch=${TARGETARCH}] [signed-by=/usr/share/keyrings/intel.gpg] https://repositories.intel.com/graphics/ubuntu ${VERSION_CODENAME} main" \
-                > /etc/apt/sources.list.d/intel-gpu.list \
+            RUN echo "deb http://archive.ubuntu.com/ubuntu plucky main universe multiverse" > /etc/apt/sources.list.d/plucky.list
+            RUN echo "Package: *\nPin: release n=plucky\n\Pin-Priority: 100\n" \
+                > /etc/apt/preferences.d/pin-plucky \
             && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                libmfx1 \
-                vainfo; \
+                intel-media-va-driver-non-free/plucky \
+                libmfx1/plucky \
+                vainfo/plucky; \
         fi \
     # Install ffmpeg
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
