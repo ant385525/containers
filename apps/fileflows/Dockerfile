@@ -59,6 +59,7 @@ RUN \
         apt-transport-https \
         curl \
         gnupg \
+        jq \
         # Needed for FF to run
         aspnetcore-runtime-8.0 \
         ca-certificates \
@@ -101,6 +102,7 @@ RUN \
         apt-transport-https \
         curl \
         gnupg \
+        jq \
     && apt-get autoremove -y \
     && apt-get clean \
     # Clean up image
