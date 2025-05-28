@@ -80,8 +80,10 @@ RUN \
             && echo "https://github.com/intel/compute-runtime/releases/download/24.35.30872.22/intel-opencl-icd-legacy1_24.35.30872.22_amd64.deb" >> list.txt \
             && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-core_1.0.17537.20_amd64.deb" >> list.txt \
             && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-opencl_1.0.17537.20_amd64.deb" >> list.txt \
-            && wget -i list.txt \
-            && dpkg -i *.deb \
+            && wget -q -i list.txt \
+            # Apt to resolve dependencies
+            && apt install -y --no-install-recommends --no-install-suggests \
+                ./$(ls *.deb) \
             && cd .. \
             rm -rf /tmp/*; \
         fi \
