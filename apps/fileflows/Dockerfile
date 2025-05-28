@@ -69,7 +69,7 @@ RUN \
     && \
         # add intel apt repo for up-to-date packages
         if [ "${TARGETARCH}" = "amd64" ]; then \
-            && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
+            curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
                 | gpg --dearmor > /usr/share/keyrings/intel.gpg \
             && echo "deb [arch=${TARGETARCH}] [signed-by=/usr/share/keyrings/intel.gpg] https://repositories.intel.com/graphics/ubuntu ${VERSION_CODENAME} main" \
                 > /etc/apt/sources.list.d/intel-gpu.list \
