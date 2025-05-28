@@ -69,8 +69,8 @@ RUN \
     && \
         # add plucky repo for up-to-date packages
         if [ "${TARGETARCH}" = "amd64" ]; then \
-            RUN echo "deb http://archive.ubuntu.com/ubuntu plucky main universe multiverse" > /etc/apt/sources.list.d/plucky.list
-            RUN echo "Package: *\nPin: release n=plucky\n\Pin-Priority: 100\n" \
+            echo "deb http://archive.ubuntu.com/ubuntu plucky main universe multiverse" > /etc/apt/sources.list.d/plucky.list \
+            echo "Package: *\nPin: release n=plucky\n\Pin-Priority: 100\n" \
                 > /etc/apt/preferences.d/pin-plucky \
             && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
                 intel-media-va-driver-non-free/plucky \
