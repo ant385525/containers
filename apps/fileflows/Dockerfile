@@ -1,17 +1,13 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.04 AS fileflows-download
+FROM docker.io/library/alpine:3.21.3 AS fileflows-download
 ARG VERSION
-
-ENV DEBIAN_FRONTEND="noninteractive" \
-    UMASK="0002" \
-    TZ="Etc/UTC"
 
 USER root
 WORKDIR /app
 
 RUN \
-    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+    apk add --no-cache \
         ca-certificates \
         curl \
         unzip \
@@ -25,19 +21,17 @@ RUN \
     # Clean up image
     && rm -rf /tmp/* /app/{FlowRunner,Node,Server}/runtimes \
         /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apk del \
         ca-certificates \
         curl \
-        unzip \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        unzip
 
 FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 ARG FFMPEG_VERSION
+ARG INTEL_CR_VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     UMASK="0002" \
@@ -72,22 +66,23 @@ RUN \
         libfontconfig1 \
         libfreetype6 \
         pciutils \
-    # libva 2.21 needed for jellyfin-ffmpeg
-    && echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu oracular main universe" \
-        > /etc/apt/sources.list.d/oracular.list \
-    && echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports oracular main universe" \
-        >> /etc/apt/sources.list.d/oracular.list \
-    && printf "Package: libva2\nPin: release n=oracular\nPin-Priority: 990\n" \
-        > /etc/apt/preferences.d/99-libva-pin.pref \
-    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        libva2 \
-    # Intel HW
+    # Intel Compute Runtime
+    # Taken from https://github.com/hotio/jellyfin/blob/12625b856cf719b36431aff9de5519885b33041d/linux-amd64.Dockerfile#L29-L42
     && \
         if [ "${TARGETARCH}" = "amd64" ]; then \
-            apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                i965-va-driver-shaders \
-                libmfx-gen1.2; \
+            RUN \
+                mkdir /tmp/intel-compute-runtime \
+                && cd /tmp/intel-compute-runtime \
+                && curl -fsSL "https://api.github.com/repos/intel/compute-runtime/releases/tags/${INTEL_CR_VERSION}" | jq -r '.assets[].browser_download_url' | grep -e "libigdgmm.*\.deb" >> list.txt \
+                && curl -fsSL "https://api.github.com/repos/intel/compute-runtime/releases/tags/${INTEL_CR_VERSION}" | jq -r '.assets[].browser_download_url' | grep -e "intel-opencl-icd.*\.deb" >> list.txt \
+                && curl -fsSL "https://api.github.com/repos/intel/compute-runtime/releases/tags/${INTEL_CR_VERSION}" | jq -r '.body' | grep "wget" | grep "intel-graphics-compiler" | sed 's|wget ||g' >> list.txt \
+                && echo "https://github.com/intel/compute-runtime/releases/download/24.35.30872.22/intel-opencl-icd-legacy1_24.35.30872.22_amd64.deb" >> list.txt \
+                && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-core_1.0.17537.20_amd64.deb" >> list.txt \
+                && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-opencl_1.0.17537.20_amd64.deb" >> list.txt \
+                && wget -i list.txt \
+                && dpkg -i *.deb \
+                && cd .. \
+                rm -rf /tmp/*; \
         fi \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \

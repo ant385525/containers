@@ -10,6 +10,11 @@ variable "FFMPEG_VERSION" {
   default = "7.1.1-3-noble"
 }
 
+variable "INTEL_CR_VERSION" {
+  // renovate: datasource=github-releases depName=intel/compute-runtime
+  default = "25.18.33578.6"
+}
+
 variable "SOURCE" {
   default = "https://github.com/revenz/fileflows"
 }
@@ -23,6 +28,7 @@ target "image" {
   args = {
     VERSION = "${VERSION}"
     FFMPEG_VERSION = "${FFMPEG_VERSION}"
+    INTEL_CR_VERSION = "${INTEL_CR_VERSION}"
   }
   labels = {
     "org.opencontainers.image.source" = "${SOURCE}"
