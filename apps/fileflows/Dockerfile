@@ -11,7 +11,7 @@ RUN \
         ca-certificates \
         curl \
         unzip \
-    && curl -fSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
+    && curl -fsSL "https://fileflows.com/downloads/Zip/${VERSION}" -o /tmp/fileflows.zip \
     && unzip /tmp/fileflows.zip -d /app \
     # Init directories
     && mkdir -p /app/Plugins /app/DockerMods /app/common \
@@ -31,7 +31,6 @@ ARG TARGETARCH
 ARG VENDOR
 ARG VERSION
 ARG FFMPEG_VERSION
-ARG INTEL_CR_VERSION
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     UMASK="0002" \
@@ -59,35 +58,27 @@ RUN \
         apt-transport-https \
         curl \
         gnupg \
-        jq \
-        wget \
         # Needed for FF to run
         aspnetcore-runtime-8.0 \
         ca-certificates \
         catatonit \
         libfontconfig1 \
         libfreetype6 \
-        ocl-icd-libopencl1 \
         pciutils \
-    # Intel Compute Runtime
-    # Taken from https://github.com/hotio/jellyfin/blob/12625b856cf719b36431aff9de5519885b33041d/linux-amd64.Dockerfile#L29-L42
+    && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && \
+        # add intel apt repo for up-to-date packages
         if [ "${TARGETARCH}" = "amd64" ]; then \
-            mkdir /tmp/intel-compute-runtime \
-            && cd /tmp/intel-compute-runtime \
-            && curl -fsSL "https://api.github.com/repos/intel/compute-runtime/releases/tags/${INTEL_CR_VERSION}" | jq -r '.assets[].browser_download_url' | grep -e "libigdgmm.*\.deb" >> list.txt \
-            && curl -fsSL "https://api.github.com/repos/intel/compute-runtime/releases/tags/${INTEL_CR_VERSION}" | jq -r '.assets[].browser_download_url' | grep -e "intel-opencl-icd.*\.deb" >> list.txt \
-            && curl -fsSL "https://api.github.com/repos/intel/compute-runtime/releases/tags/${INTEL_CR_VERSION}" | jq -r '.body' | grep "wget" | grep "intel-graphics-compiler" | sed 's|wget ||g' >> list.txt \
-            && echo "https://github.com/intel/compute-runtime/releases/download/24.35.30872.22/intel-opencl-icd-legacy1_24.35.30872.22_amd64.deb" >> list.txt \
-            && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-core_1.0.17537.20_amd64.deb" >> list.txt \
-            && echo "https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.20/intel-igc-opencl_1.0.17537.20_amd64.deb" >> list.txt \
-            && wget -q -i list.txt \
-            && dpkg -i *.deb \
-            && cd .. \
-            rm -rf /tmp/*; \
+            && curl -fsSL https://repositories.intel.com/graphics/intel-graphics.key \
+                | gpg --dearmor > /usr/share/keyrings/intel.gpg \
+            && echo "deb [arch=${TARGETARCH}] [signed-by=/usr/share/keyrings/intel.gpg] https://repositories.intel.com/graphics/ubuntu ${VERSION_CODENAME} main" \
+                > /etc/apt/sources.list.d/intel-gpu.list \
+            && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+                intel-media-va-driver-non-free \
+                libmfx1 \
+                vainfo; \
         fi \
     # Install ffmpeg
-    && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
         | gpg --dearmor -o /etc/apt/trusted.gpg.d/jellyfin_team.gpg \
     && echo "deb [arch=${TARGETARCH}] https://repo.jellyfin.org/ubuntu ${VERSION_CODENAME} main" \
@@ -104,8 +95,6 @@ RUN \
         apt-transport-https \
         curl \
         gnupg \
-        jq \
-        wget \
     && apt-get autoremove -y \
     && apt-get clean \
     # Clean up image
