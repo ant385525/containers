@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/alpine/git:v2.47.2 AS cwa-download
+FROM docker.io/alpine/git:v2.49.0 AS cwa-download
 ARG VERSION
 WORKDIR /tmp/cwa
 USER root
