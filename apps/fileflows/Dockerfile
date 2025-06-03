@@ -53,7 +53,15 @@ COPY --from=fileflows-download /app /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
-    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+    # Add plucky repo for up-to-date Intel drivers
+    if [ "${TARGETARCH}" = "amd64" ]; then \
+        echo "deb http://archive.ubuntu.com/ubuntu plucky main universe multiverse" > /etc/apt/sources.list.d/plucky.list \
+        && echo "Package: intel-media-va-driver-non-free" > /etc/apt/preferences.d/pin-intel \
+        && echo "Pin: release n=plucky" >> /etc/apt/preferences.d/pin-intel \
+        && echo "Pin-Priority: 1001" >> /etc/apt/preferences.d/pin-intel \
+        && echo "" >> /etc/apt/preferences.d/pin-intel; \
+    fi \
+    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         # Can uninstall before build
         apt-transport-https \
         curl \
@@ -65,17 +73,10 @@ RUN \
         libfontconfig1 \
         libfreetype6 \
         pciutils \
-    # Add plucky repo for up-to-date Intel drivers
-    && if [ "${TARGETARCH}" = "amd64" ]; then \
-        echo "deb http://archive.ubuntu.com/ubuntu plucky main universe multiverse" > /etc/apt/sources.list.d/plucky.list \
-        && echo "Package: intel-media-va-driver-non-free" > /etc/apt/preferences.d/pin-intel \
-        && echo "Pin: release n=plucky" >> /etc/apt/preferences.d/pin-intel \
-        && echo "Pin-Priority: 1001" >> /etc/apt/preferences.d/pin-intel \
-        && echo "" >> /etc/apt/preferences.d/pin-intel \
-        && apt-get update \
-        && apt-get install -y --no-install-recommends --no-install-suggests \
-            intel-media-va-driver-non-free; \
-    fi \
+        && if [ "${TARGETARCH}" = "amd64" ]; then \
+            apt-get install -y --no-install-recommends --no-install-suggests \
+                intel-media-va-driver-non-free; \
+        fi \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
