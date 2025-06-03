@@ -29,6 +29,7 @@ command:
   # Ensure libva2 is > 2.20.0
   "dpkg --compare-versions $(dpkg-query -W -f='${Version}' libva2) gt 2.20.0":
     exit-status: 0
+    when: "[ \"$(dpkg --print-architecture)\" = \"amd64\" ]"
 file:
   /app/Data/Data/FileFlows.sqlite:
     exists: true
