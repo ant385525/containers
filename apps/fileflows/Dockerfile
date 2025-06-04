@@ -1,17 +1,13 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/ubuntu:24.04 AS fileflows-download
+FROM docker.io/library/alpine:3.22.0 AS fileflows-download
 ARG VERSION
-
-ENV DEBIAN_FRONTEND="noninteractive" \
-    UMASK="0002" \
-    TZ="Etc/UTC"
 
 USER root
 WORKDIR /app
 
 RUN \
-    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+    apk add --no-cache \
         ca-certificates \
         curl \
         unzip \
@@ -25,13 +21,10 @@ RUN \
     # Clean up image
     && rm -rf /tmp/* /app/{FlowRunner,Node,Server}/runtimes \
         /app/{FlowRunner,Node,Server}/*.exe /app/Server/Nodes /app/*.* \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apk del \
         ca-certificates \
         curl \
-        unzip \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+        unzip
 
 FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
@@ -60,7 +53,15 @@ COPY --from=fileflows-download /app /app
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
-    apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
+    # Add plucky repo for up-to-date Intel drivers
+    if [ "${TARGETARCH}" = "amd64" ]; then \
+        echo "deb http://archive.ubuntu.com/ubuntu plucky main universe multiverse" > /etc/apt/sources.list.d/plucky.list \
+        && echo "Package: intel-media-va-driver-non-free" > /etc/apt/preferences.d/pin-intel \
+        && echo "Pin: release n=plucky" >> /etc/apt/preferences.d/pin-intel \
+        && echo "Pin-Priority: 1001" >> /etc/apt/preferences.d/pin-intel \
+        && echo "" >> /etc/apt/preferences.d/pin-intel; \
+    fi \
+    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         # Can uninstall before build
         apt-transport-https \
         curl \
@@ -72,23 +73,10 @@ RUN \
         libfontconfig1 \
         libfreetype6 \
         pciutils \
-    # libva 2.21 needed for jellyfin-ffmpeg
-    && echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu oracular main universe" \
-        > /etc/apt/sources.list.d/oracular.list \
-    && echo "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports oracular main universe" \
-        >> /etc/apt/sources.list.d/oracular.list \
-    && printf "Package: libva2\nPin: release n=oracular\nPin-Priority: 990\n" \
-        > /etc/apt/preferences.d/99-libva-pin.pref \
-    && apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
-        libva2 \
-    # Intel HW
-    && \
-        if [ "${TARGETARCH}" = "amd64" ]; then \
-            apt-get install -y --no-install-recommends --no-install-suggests \
-                intel-media-va-driver-non-free \
-                i965-va-driver-shaders \
-                libmfx-gen1.2; \
-        fi \
+    && if [ "${TARGETARCH}" = "amd64" ]; then \
+        apt-get install -y --no-install-recommends --no-install-suggests \
+            intel-media-va-driver-non-free; \
+    fi \
     # Install ffmpeg
     && VERSION_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) \
     && curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key \
