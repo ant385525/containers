@@ -7,7 +7,7 @@ variable "VERSION" {
 
 variable "FFMPEG_VERSION" {
   // renovate: datasource=deb depName=jellyfin-ffmpeg7 versioning=deb
-  default = "7.1.1-4-noble"
+  default = "7.1.1-5-noble"
 }
 
 variable "SOURCE" {
