@@ -1,0 +1,8 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
+port:
+  tcp:8084:
+    listening: true
+http:
+  http://localhost:8084/request/api/status:
+    status: 200
