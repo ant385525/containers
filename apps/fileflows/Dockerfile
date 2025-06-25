@@ -1,9 +1,5 @@
 # syntax=docker/dockerfile:1
 
-# Placeholders to use with variable sub
-FROM --platform=linux/amd64 ghcr.io/btbn/ffmpeg-builds/linux64-gpl:latest AS btbn
-FROM --platform=linux/arm64 ghcr.io/btbn/ffmpeg-builds/linuxarm64-gpl:latest AS btbn
-
 FROM docker.io/library/alpine:3.22.0 AS fileflows-download
 ARG VERSION
 
@@ -30,6 +26,37 @@ RUN \
         curl \
         unzip
 
+FROM docker.io/library/alpine:3.22.0 AS btbn-download
+ARG TARGETARCH
+
+USER root
+WORKDIR /app/common/ffmpeg-static
+
+RUN \
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        BTBN_ARCH="linux64"; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        BTBN_ARCH="linuxarm64"; \
+    fi \
+    && apk add --no-cache \
+        ca-certificates \
+        curl \
+        tar \
+        xz \
+    && curl -fsSL "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-${BTBN_ARCH}-gpl.tar.xz" \
+        | tar -xJ --strip-components=1 -C /tmp \
+            --wildcards '*/bin/ffmpeg' '*/bin/ffprobe' \
+    && mv /tmp/bin/ffmpeg /app/common/ffmpeg-static/ffmpeg \
+    && mv /tmp/bin/ffprobe /app/common/ffmpeg-static/ffprobe \
+    && chmod +x /app/common/ffmpeg-static/ffmpeg /app/common/ffmpeg-static/ffprobe \
+    # Clean up image
+    && rm -rf /tmp/* \
+    && apk del \
+        ca-certificates \
+        curl \
+        tar \
+        xz
+
 FROM docker.io/library/ubuntu:24.04 AS runtime
 ARG TARGETARCH
 ARG VENDOR
@@ -52,9 +79,7 @@ USER root
 WORKDIR /app
 
 COPY --from=fileflows-download /app /app
-# btbn for fileflows ffmpeg (new default)
-COPY --from=btbn /usr/local/bin/ffmpeg  /app/common/ffmpeg-static/ffmpeg
-COPY --from=btbn /usr/local/bin/ffprobe /app/common/ffmpeg-static/ffprobe
+COPY --from=btbn-download /app/common/ffmpeg-static /app/common/ffmpeg-static
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \

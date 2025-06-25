@@ -26,9 +26,21 @@ command:
     exit-status: 0
     stdout:
       - '/^.+$/'
+  "/app/common/ffmpeg-static/ffmpeg -version":
+    exit-status: 0
+  "/app/common/ffmpeg-static/ffprobe -version":
+    exit-status: 0
 file:
   /app/Data/Data/FileFlows.sqlite:
     exists: true
     owner: nobody
     group: nogroup
     mode: "0644"
+  /app/common/ffmpeg-static/ffmpeg:
+    exists: true
+    filetype: file
+    mode: "0755"
+  /app/common/ffmpeg-static/ffprobe:
+    exists: true
+    filetype: file
+    mode: "0755"
