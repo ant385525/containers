@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
 # Placeholders to use with variable sub
-FROM ghcr.io/btbn/ffmpeg-builds/linux64-gpl:latest AS ffmpeg-amd64
-FROM ghcr.io/btbn/ffmpeg-builds/linuxarm64-gpl:latest AS ffmpeg-arm64
+FROM --platform=linux/amd64 ghcr.io/btbn/ffmpeg-builds/linux64-gpl:latest AS btbn
+FROM --platform=linux/arm64 ghcr.io/btbn/ffmpeg-builds/linuxarm64-gpl:latest AS btbn
 
 FROM docker.io/library/alpine:3.22.0 AS fileflows-download
 ARG VERSION
@@ -53,8 +53,8 @@ WORKDIR /app
 
 COPY --from=fileflows-download /app /app
 # btbn for fileflows ffmpeg (new default)
-COPY --from=ffmpeg-${TARGETARCH} /usr/local/bin/ffmpeg  /app/common/ffmpeg-static/ffmpeg
-COPY --from=ffmpeg-${TARGETARCH} /usr/local/bin/ffprobe /app/common/ffmpeg-static/ffprobe
+COPY --from=btbn /usr/local/bin/ffmpeg  /app/common/ffmpeg-static/ffmpeg
+COPY --from=btbn /usr/local/bin/ffprobe /app/common/ffmpeg-static/ffprobe
 
 # hadolint ignore=DL3008,DL3015,SC2039,SC2086
 RUN \
