@@ -16,4 +16,4 @@ RUN apk add --no-cache \
 
 USER nobody:nogroup
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["bash", "-c", "sleep infinity & wait"]
