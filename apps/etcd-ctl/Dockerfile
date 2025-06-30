@@ -12,8 +12,9 @@ WORKDIR /app
 
 RUN apk add --no-cache \
     bash \
-    etcd-ctl
+    catatonit \
+    etcd-ctl=${VERSION}
 
 USER nobody:nogroup
 
-ENTRYPOINT ["bash", "-c", "sleep infinity & wait"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "bash", "-c", "sleep infinity"]
