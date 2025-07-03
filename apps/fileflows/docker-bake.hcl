@@ -2,7 +2,7 @@ target "docker-metadata-action" {}
 
 variable "VERSION" {
   // renovate: datasource=custom.fileflows depName=fileflows versioning=loose
-  default = "25.6.9.5574"
+  default = "25.7.1.5604"
 }
 
 variable "FFMPEG_VERSION" {
