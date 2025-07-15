@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/alpine:3.22.0 AS fileflows-download
+FROM docker.io/library/alpine:3.22.1 AS fileflows-download
 ARG VERSION
 
 USER root
@@ -26,7 +26,7 @@ RUN \
         curl \
         unzip
 
-FROM docker.io/library/alpine:3.22.0 AS btbn-download
+FROM docker.io/library/alpine:3.22.1 AS btbn-download
 ARG TARGETARCH
 
 USER root
