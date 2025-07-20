@@ -13,4 +13,4 @@ RUN apk add --no-cache \
     bash \
     smartmontools=${VERSION}
 
-ENTRYPOINT ["/usr/bin/catatonit", "--", "bash", "-c", "sleep infinity"]
+ENTRYPOINT ["bash", "-c", "sleep infinity"]
