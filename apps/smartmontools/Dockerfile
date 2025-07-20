@@ -10,4 +10,7 @@ ENV UMASK="0002" \
 USER root
 
 RUN apk add --no-cache \
+    bash \
     smartmontools=${VERSION}
+
+ENTRYPOINT ["/usr/bin/catatonit", "--", "bash", "-c", "sleep infinity"]
