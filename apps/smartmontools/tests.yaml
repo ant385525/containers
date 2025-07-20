@@ -1,0 +1,14 @@
+---
+file:
+  /usr/sbin/smartctl:
+    exists: true
+    mode: "0755"
+  /usr/sbin/smartd:
+    exists: true
+    mode: "0755"
+
+command:
+  smartctl --version:
+    exit-status: 0
+  smartd --version:
+    exit-status: 0
