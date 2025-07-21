@@ -13,4 +13,5 @@ RUN apk add --no-cache \
     lsblk \
     smartmontools=${VERSION}
 
-ENTRYPOINT ["sh", "-c", "sleep infinity"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["sleep infinity"]
