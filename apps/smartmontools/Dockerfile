@@ -10,6 +10,7 @@ ENV UMASK="0002" \
 USER root
 
 RUN apk add --no-cache \
+    lsblk \
     smartmontools=${VERSION}
 
 ENTRYPOINT ["sh", "-c", "sleep infinity"]
