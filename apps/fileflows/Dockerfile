@@ -73,7 +73,8 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility" \
     # Default run mode: server='0' node='1'
     FFNODE="0" \
     # Default port: 5000
-    PORT="5000"
+    PORT="5000" \
+    BASE_DIR="/app/Data"
 
 USER root
 WORKDIR /app
